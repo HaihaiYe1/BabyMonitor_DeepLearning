@@ -2,12 +2,12 @@
 
 class ApiService {
   // 基础 HTTP 地址
-  static const String baseHttpUrl = 'http://10.0.2.2:8000';
-  // static const String baseHttpUrl = 'http://localhost:8000';
+  // static const String baseHttpUrl = 'http://10.0.2.2:8000';
+  static const String baseHttpUrl = 'http://localhost:8000';
 
   // 基础 WebSocket 地址
-  static const String baseWsUrl = 'ws://10.0.2.2:8000';
-  // static const String baseWsUrl = 'ws://localhost:8000';
+  // static const String baseWsUrl = 'ws://10.0.2.2:8000';
+  static const String baseWsUrl = 'ws://localhost:8000';
 
   // 设备相关接口
   static const String deviceList = '$baseHttpUrl/device/list';

@@ -81,7 +81,7 @@ class MyApp extends ConsumerWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white.withOpacity(0.7), // 半透明卡片
         elevation: 5, // 阴影
         shape: RoundedRectangleBorder(
