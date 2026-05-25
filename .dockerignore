@@ -1,0 +1,11 @@
+.dart_tool/
+.git
+.gitignore
+.idea/
+*.iml
+.metadata
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
