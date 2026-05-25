@@ -246,6 +246,29 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                   },
                 ),
                 const SizedBox(height: 8),
+                _buildSectionTitle('AI功能'),
+                _buildInfoTile(
+                  title: 'AI Agent对话',
+                  icon: Icons.chat,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/chat');
+                  },
+                ),
+                _buildInfoTile(
+                  title: '育儿建议',
+                  icon: Icons.lightbulb,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/advice');
+                  },
+                ),
+                _buildInfoTile(
+                  title: '智能家居控制',
+                  icon: Icons.home,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/smart-home');
+                  },
+                ),
+                const SizedBox(height: 8),
                 _buildSectionTitle('支持与帮助'),
                 _buildInfoTile(
                   title: S.of(context).customer_support,

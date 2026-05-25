@@ -17,6 +17,8 @@ import 'history_page.dart';
 import 'package:my_first_app/widgets/card_widgets.dart';
 import 'package:http/http.dart' as http;
 import '../widgets/custom_drawer.dart';
+import 'chat_page.dart';
+import 'advice_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -118,6 +120,18 @@ class _HomePageState extends State<HomePage> {
                       label: S.of(context).statistics,
                       color: Colors.purple,
                       targetPage: DataAnalysisPage(),
+                    ),
+                    TabItem(
+                      previewImage: 'lib/assets/icons/chat.png',
+                      label: S.of(context).agent_chat ?? 'AI对话',
+                      color: Colors.teal,
+                      targetPage: const ChatPage(),
+                    ),
+                    TabItem(
+                      previewImage: 'lib/assets/icons/advice.png',
+                      label: S.of(context).parenting_advice ?? '育儿建议',
+                      color: Colors.amber,
+                      targetPage: const AdvicePage(),
                     ),
                   ],
                 ),
