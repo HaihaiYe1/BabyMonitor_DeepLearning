@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>My First App</string>
+	<string>Baby Monitor</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>my_first_app</string>
+	<string>baby_monitor</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -46,16 +46,42 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 
-	<!-- 添加推送通知支持 -->
+	<!-- 推送通知支持 -->
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
+		<string>audio</string>
 	</array>
 
-	<!-- 添加通知权限请求 -->
+	<!-- 通知权限请求 -->
 	<key>UIUserNotificationUsageDescription</key>
-	<string>我们需要您的允许来发送推送通知。</string>
+	<string>我们需要您的允许来发送推送通知，以便及时提醒您婴儿的安全状况。</string>
+
+	<!-- 摄像头权限 -->
+	<key>NSCameraUsageDescription</key>
+	<string>我们需要访问摄像头来进行视频监控和婴儿安全检测。</string>
+
+	<!-- 麦克风权限 -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>我们需要访问麦克风来支持双向语音对讲功能。</string>
+
+	<!-- 相册权限 -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>我们需要访问相册来保存监控截图和录像。</string>
+
+	<!-- 本地网络权限 -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>我们需要访问本地网络来连接监控设备。</string>
+
+	<!-- App Transport Security -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 
 </dict>
 </plist>

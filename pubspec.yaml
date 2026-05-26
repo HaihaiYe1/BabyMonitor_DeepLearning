@@ -1,5 +1,5 @@
-name: my_first_app
-description: "A new Flutter project."
+name: baby_monitor
+description: "Baby Monitor - 基于AI的婴儿智能看护系统"
 publish_to: 'none'
 
 version: 1.0.0+1

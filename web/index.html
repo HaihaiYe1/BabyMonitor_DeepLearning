@@ -1,38 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Baby Monitor - 基于AI的婴儿智能看护系统">
+  <meta name="keywords" content="婴儿监控,AI看护,智能家居,实时监控">
+  <meta name="author" content="Baby Monitor Team">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="my_first_app">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Baby Monitor">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>my_first_app</title>
+  <!-- 主题颜色 -->
+  <meta name="theme-color" content="#4A90E2">
+  <meta name="msapplication-TileColor" content="#4A90E2">
+
+  <title>Baby Monitor - 婴儿智能看护系统</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* 加载动画样式 */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #E3FDFD 0%, #FFE6FA 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .loading-container {
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(74, 144, 226, 0.2);
+      border-top-color: #4A90E2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: #333;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .loading-subtext {
+      color: #666;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .loading-text {
+        font-size: 16px;
+      }
+      .loading-subtext {
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">🍼 Baby Monitor</div>
+    <div class="loading-subtext">正在加载应用...</div>
+  </div>
+
   <script src="flutter_bootstrap.js" async></script>
+
+  <!-- PWA支持 -->
+  <script>
+    // 注册Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('flutter-first-frame', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js');
+      });
+    }
+
+    // 处理全屏模式
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      document.body.style.paddingTop = '0';
+    }
+  </script>
 </body>
 </html>

@@ -1,13 +1,16 @@
 {
-    "name": "my_first_app",
-    "short_name": "my_first_app",
+    "name": "Baby Monitor - 婴儿智能看护系统",
+    "short_name": "Baby Monitor",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#E3FDFD",
+    "theme_color": "#4A90E2",
+    "description": "基于AI的婴儿智能看护系统，支持实时监控、智能检测、双向语音对讲",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "scope": "/",
+    "lang": "zh-CN",
+    "categories": ["health", "lifestyle", "utilities"],
     "icons": [
         {
             "src": "icons/Icon-192.png",
@@ -30,6 +33,21 @@
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
+        }
+    ],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "实时监控",
+            "short_name": "监控",
+            "url": "/home",
+            "description": "查看实时监控画面"
+        },
+        {
+            "name": "AI对话",
+            "short_name": "对话",
+            "url": "/chat",
+            "description": "与AI Agent对话"
         }
     ]
 }
