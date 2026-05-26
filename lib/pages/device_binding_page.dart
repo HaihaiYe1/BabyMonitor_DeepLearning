@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../generated/l10n.dart';
 import '../models/device_model.dart';
 import '../providers/device_provider.dart';
-import 'package:my_first_app/widgets/test_rtsp.dart'; // RTSP 测试组件
+import '../widgets/test_rtsp.dart'; // RTSP 测试组件
 import 'package:flutter_vlc_player/flutter_vlc_player.dart'; // VLC 播放器
-import 'package:my_first_app/widgets/video_player.dart'; // 视频播放器组件
+import '../widgets/video_player.dart'; // 视频播放器组件
 
 class DeviceBindingPage extends ConsumerStatefulWidget {
   final Device? device; // 设备对象

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -155,7 +157,7 @@ class MyApp extends ConsumerWidget {
       ),
       
       // 卡片主题
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: isDark 
             ? const Color(0xFF2C2C2C)
             : Colors.white.withOpacity(0.7),
@@ -210,7 +212,7 @@ class MyApp extends ConsumerWidget {
       ),
       
       // 对话框主题
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: _getPlatformDialogRadius(platform),
         ),

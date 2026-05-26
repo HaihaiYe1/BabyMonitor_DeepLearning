@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/models/notification_model.dart';
+import '../models/notification_model.dart';
 
 class TrashPage extends StatelessWidget {
   final List<NotificationModel> trash; // 使用 NotificationModel

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../generated/l10n.dart';
 import 'trash_page.dart';
-import 'package:my_first_app/services/notification_service.dart';
-import 'package:my_first_app/widgets/notification_card.dart'; // 引入新的 NotificationCard
-import 'package:my_first_app/models/notification_model.dart'; // 引入 NotificationModel
+import '../services/notification_service.dart';
+import '../widgets/notification_card.dart'; // 引入新的 NotificationCard
+import '../models/notification_model.dart'; // 引入 NotificationModel
 import 'dart:async'; // 导入 Timer
 
 class HistoryPage extends StatefulWidget {

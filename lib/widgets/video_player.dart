@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
-import 'package:my_first_app/pages/realtime_monitor_page.dart'; // 导入全屏页面
+import '../pages/realtime_monitor_page.dart'; // 导入全屏页面
 
 class VideoPlayerWidget extends StatefulWidget {
   final String videoUrl; // 传入视频地址

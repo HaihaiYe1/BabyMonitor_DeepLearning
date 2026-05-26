@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
-import 'package:my_first_app/services/api_service.dart';
+import '../services/api_service.dart';
 import '../models/device_model.dart';
 
 /// 设备数据仓库 Provider

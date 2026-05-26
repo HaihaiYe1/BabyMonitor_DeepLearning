@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:my_first_app/generated/l10n.dart';
+import '../generated/l10n.dart';
 
 class FaqPage extends ConsumerStatefulWidget {
   @override

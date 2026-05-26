@@ -4,8 +4,9 @@ import '../generated/l10n.dart';
 import '../providers/device_provider.dart';
 import '../models/device_model.dart';
 import '../services/auth_service.dart';
+import '../widgets/card_widgets.dart';
 import 'device_binding_page.dart'; // 设备绑定页面
-import 'package:my_first_app/widgets/card_widgets.dart'; // 设备卡片组件
+import '../widgets/card_widgets.dart'; // 设备卡片组件
 import 'package:shared_preferences/shared_preferences.dart'; // 导入 SharedPreferences
 
 class DeviceManagementPage extends ConsumerStatefulWidget {

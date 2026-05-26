@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +30,7 @@ class PlatformAdapter {
       colorSchemeSeed: Colors.blue,
       brightness: isDark ? Brightness.dark : Brightness.light,
       fontFamily: 'SF Pro Display',
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -54,7 +55,7 @@ class PlatformAdapter {
       colorSchemeSeed: Colors.blue,
       brightness: isDark ? Brightness.dark : Brightness.light,
       fontFamily: 'Roboto',
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -76,7 +77,7 @@ class PlatformAdapter {
       colorSchemeSeed: Colors.blue,
       brightness: isDark ? Brightness.dark : Brightness.light,
       fontFamily: 'Segoe UI',
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4),

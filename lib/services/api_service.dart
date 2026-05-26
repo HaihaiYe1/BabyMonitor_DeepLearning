@@ -30,53 +30,53 @@ class ApiService {
   }
 
   // ==================== 设备相关接口 ====================
-  static const String deviceList = '$baseHttpUrl/device/list';
-  static const String deviceBase = '$baseHttpUrl/device';
+  static final String deviceList = '$baseHttpUrl/device/list';
+  static final String deviceBase = '$baseHttpUrl/device';
   static String videoDetectToggle(bool start, int deviceId) =>
       '$baseHttpUrl/video/${start ? "start" : "stop"}-detect?device_id=$deviceId';
 
   // ==================== 认证相关接口 ====================
-  static const String authBase = '$baseHttpUrl/auth';
-  static const String login = '$authBase/login';
-  static const String register = '$authBase/register';
-  static const String updatePassword = '$authBase/change-password';
-  static const String updateUser = '$authBase/update-user';
-  static const String userInfo = '$authBase/me';
+  static final String authBase = '$baseHttpUrl/auth';
+  static final String login = '$authBase/login';
+  static final String register = '$authBase/register';
+  static final String updatePassword = '$authBase/change-password';
+  static final String updateUser = '$authBase/update-user';
+  static final String userInfo = '$authBase/me';
 
   // ==================== 通知相关接口 ====================
-  static const String notificationBase = '$baseHttpUrl/notification';
-  static const String notificationList = '$notificationBase';
+  static final String notificationBase = '$baseHttpUrl/notification';
+  static final String notificationList = '$notificationBase';
   static String notificationDetail(int id) => '$notificationBase/$id';
   static String pinNotification(int id) => '$notificationBase/$id/pin';
   static String notificationByUser(int userId) => '$notificationBase?user_id=$userId';
 
   // ==================== Agent相关接口 ====================
-  static const String agentBase = '$baseHttpUrl/agent';
-  static const String agentStatus = '$agentBase/status';
-  static const String agentInitialize = '$agentBase/initialize';
-  static const String agentChat = '$agentBase/chat';
-  static const String agentResetMemory = '$agentBase/reset-memory';
-  static const String agentPreferences = '$agentBase/preferences';
-  static const String agentMemorySummary = '$agentBase/memory-summary';
+  static final String agentBase = '$baseHttpUrl/agent';
+  static final String agentStatus = '$agentBase/status';
+  static final String agentInitialize = '$agentBase/initialize';
+  static final String agentChat = '$agentBase/chat';
+  static final String agentResetMemory = '$agentBase/reset-memory';
+  static final String agentPreferences = '$agentBase/preferences';
+  static final String agentMemorySummary = '$agentBase/memory-summary';
 
   // ==================== RAG育儿知识库接口 ====================
-  static const String ragBase = '$baseHttpUrl/rag';
-  static const String ragAdvice = '$ragBase/advice';
-  static const String ragEmergencyAdvice = '$ragBase/emergency-advice';
-  static const String ragKnowledgeStats = '$ragBase/knowledge-stats';
-  static const String ragSearchKnowledge = '$ragBase/search-knowledge';
-  static const String ragAddKnowledge = '$ragBase/add-knowledge';
+  static final String ragBase = '$baseHttpUrl/rag';
+  static final String ragAdvice = '$ragBase/advice';
+  static final String ragEmergencyAdvice = '$ragBase/emergency-advice';
+  static final String ragKnowledgeStats = '$ragBase/knowledge-stats';
+  static final String ragSearchKnowledge = '$ragBase/search-knowledge';
+  static final String ragAddKnowledge = '$ragBase/add-knowledge';
 
   // ==================== 智能家居控制接口 ====================
-  static const String smartHomeBase = '$baseHttpUrl/smart-home';
-  static const String smartHomeStatus = '$smartHomeBase/status';
-  static const String speakerControl = '$smartHomeBase/speaker/control';
-  static const String lightControl = '$smartHomeBase/light/control';
-  static const String sceneActivate = '$smartHomeBase/scene/activate';
-  static const String smartHomeScenes = '$smartHomeBase/scenes';
-  static const String quickSleep = '$smartHomeBase/quick/sleep';
-  static const String quickComfort = '$smartHomeBase/quick/comfort';
-  static const String quickAlert = '$smartHomeBase/quick/alert';
+  static final String smartHomeBase = '$baseHttpUrl/smart-home';
+  static final String smartHomeStatus = '$smartHomeBase/status';
+  static final String speakerControl = '$smartHomeBase/speaker/control';
+  static final String lightControl = '$smartHomeBase/light/control';
+  static final String sceneActivate = '$smartHomeBase/scene/activate';
+  static final String smartHomeScenes = '$smartHomeBase/scenes';
+  static final String quickSleep = '$smartHomeBase/quick/sleep';
+  static final String quickComfort = '$smartHomeBase/quick/comfort';
+  static final String quickAlert = '$smartHomeBase/quick/alert';
 
   // ==================== 视频检测接口 ====================
   static String agentDetect(int deviceId, {int maxFrames = 5, bool useAgent = true}) =>
@@ -89,15 +89,15 @@ class ApiService {
       '$baseHttpUrl/video/stop-detect?device_id=$deviceId';
 
   // ==================== 性能监控接口 ====================
-  static const String monitoringBase = '$baseHttpUrl/monitoring';
-  static const String monitoringStats = '$monitoringBase/stats';
-  static const String monitoringConnections = '$monitoringBase/connections';
-  static const String monitoringDeviceSubscriptions = '$monitoringBase/device-subscriptions';
-  static const String monitoringAudioStats = '$monitoringBase/audio-stats';
+  static final String monitoringBase = '$baseHttpUrl/monitoring';
+  static final String monitoringStats = '$monitoringBase/stats';
+  static final String monitoringConnections = '$monitoringBase/connections';
+  static final String monitoringDeviceSubscriptions = '$monitoringBase/device-subscriptions';
+  static final String monitoringAudioStats = '$monitoringBase/audio-stats';
 
   // ==================== 测试接口 ====================
-  static const String timingBase = '$baseHttpUrl/timing';
-  static const String timingTest = '$timingBase/timing';
+  static final String timingBase = '$baseHttpUrl/timing';
+  static final String timingTest = '$timingBase/timing';
 
   // ==================== WebSocket流地址 ====================
   static String videoStreamWs(int deviceId, String clientId) =>
@@ -108,5 +108,5 @@ class ApiService {
       '$baseWsUrl/ws/stream/intercom/$deviceId?client_id=$clientId&role=$role';
   static String agentStreamWs(String clientId, int userId) =>
       '$baseWsUrl/ws/stream/agent-stream?client_id=$clientId&user_id=$userId';
-  static const String alertsWebSocket = '$baseWsUrl/ws/alerts';
+  static final String alertsWebSocket = '$baseWsUrl/ws/alerts';
 }

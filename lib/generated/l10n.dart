@@ -1289,6 +1289,581 @@ class S {
       args: [],
     );
   }
+
+  /// `AI Agent Chat`
+  String get agent_chat {
+    return Intl.message('AI Agent Chat', name: 'agent_chat', desc: '', args: []);
+  }
+
+  /// `Parenting Advice`
+  String get parenting_advice {
+    return Intl.message('Parenting Advice', name: 'parenting_advice', desc: '', args: []);
+  }
+
+  /// `Smart Home Control`
+  String get smart_home {
+    return Intl.message('Smart Home Control', name: 'smart_home', desc: '', args: []);
+  }
+
+  /// `Monitoring Dashboard`
+  String get monitoring_dashboard {
+    return Intl.message('Monitoring Dashboard', name: 'monitoring_dashboard', desc: '', args: []);
+  }
+
+  /// `Refresh Status`
+  String get refresh_status {
+    return Intl.message('Refresh Status', name: 'refresh_status', desc: '', args: []);
+  }
+
+  /// `Initialize Agent`
+  String get initialize_agent {
+    return Intl.message('Initialize Agent', name: 'initialize_agent', desc: '', args: []);
+  }
+
+  /// `Send Message`
+  String get send_message {
+    return Intl.message('Send Message', name: 'send_message', desc: '', args: []);
+  }
+
+  /// `Enter message...`
+  String get input_message {
+    return Intl.message('Enter message...', name: 'input_message', desc: '', args: []);
+  }
+
+  /// `Agent Status`
+  String get agent_status {
+    return Intl.message('Agent Status', name: 'agent_status', desc: '', args: []);
+  }
+
+  /// `Ready`
+  String get agent_ready {
+    return Intl.message('Ready', name: 'agent_ready', desc: '', args: []);
+  }
+
+  /// `Not Initialized`
+  String get agent_not_initialized {
+    return Intl.message('Not Initialized', name: 'agent_not_initialized', desc: '', args: []);
+  }
+
+  /// `Initializing...`
+  String get agent_initializing {
+    return Intl.message('Initializing...', name: 'agent_initializing', desc: '', args: []);
+  }
+
+  /// `Chat with AI Agent`
+  String get chat_with_agent {
+    return Intl.message('Chat with AI Agent', name: 'chat_with_agent', desc: '', args: []);
+  }
+
+  /// `Ask parenting questions or request help`
+  String get ask_parenting_question {
+    return Intl.message('Ask parenting questions or request help', name: 'ask_parenting_question', desc: '', args: []);
+  }
+
+  /// `Situation Description`
+  String get situation_description {
+    return Intl.message('Situation Description', name: 'situation_description', desc: '', args: []);
+  }
+
+  /// `Baby Age (months, optional)`
+  String get baby_age_months {
+    return Intl.message('Baby Age (months, optional)', name: 'baby_age_months', desc: '', args: []);
+  }
+
+  /// `Not Specified`
+  String get not_specified {
+    return Intl.message('Not Specified', name: 'not_specified', desc: '', args: []);
+  }
+
+  /// `Get Advice`
+  String get get_advice {
+    return Intl.message('Get Advice', name: 'get_advice', desc: '', args: []);
+  }
+
+  /// `Search Knowledge Base`
+  String get search_knowledge {
+    return Intl.message('Search Knowledge Base', name: 'search_knowledge', desc: '', args: []);
+  }
+
+  /// `Search Content`
+  String get search_content {
+    return Intl.message('Search Content', name: 'search_content', desc: '', args: []);
+  }
+
+  /// `Search`
+  String get search {
+    return Intl.message('Search', name: 'search', desc: '', args: []);
+  }
+
+  /// `Parenting Advice`
+  String get advice_result {
+    return Intl.message('Parenting Advice', name: 'advice_result', desc: '', args: []);
+  }
+
+  /// `Reference Knowledge`
+  String get reference_knowledge {
+    return Intl.message('Reference Knowledge', name: 'reference_knowledge', desc: '', args: []);
+  }
+
+  /// `Search Results`
+  String get search_results {
+    return Intl.message('Search Results', name: 'search_results', desc: '', args: []);
+  }
+
+  /// `No advice yet`
+  String get no_advice {
+    return Intl.message('No advice yet', name: 'no_advice', desc: '', args: []);
+  }
+
+  /// `Please enter situation description`
+  String get please_enter_situation {
+    return Intl.message('Please enter situation description', name: 'please_enter_situation', desc: '', args: []);
+  }
+
+  /// `Please enter search content`
+  String get please_enter_search {
+    return Intl.message('Please enter search content', name: 'please_enter_search', desc: '', args: []);
+  }
+
+  /// `Quick Actions`
+  String get quick_actions {
+    return Intl.message('Quick Actions', name: 'quick_actions', desc: '', args: []);
+  }
+
+  /// `Sleep Mode`
+  String get sleep_mode {
+    return Intl.message('Sleep Mode', name: 'sleep_mode', desc: '', args: []);
+  }
+
+  /// `Comfort Mode`
+  String get comfort_mode {
+    return Intl.message('Comfort Mode', name: 'comfort_mode', desc: '', args: []);
+  }
+
+  /// `Alert Mode`
+  String get alert_mode {
+    return Intl.message('Alert Mode', name: 'alert_mode', desc: '', args: []);
+  }
+
+  /// `Scene Modes`
+  String get scene_modes {
+    return Intl.message('Scene Modes', name: 'scene_modes', desc: '', args: []);
+  }
+
+  /// `Smart Speaker`
+  String get smart_speaker {
+    return Intl.message('Smart Speaker', name: 'smart_speaker', desc: '', args: []);
+  }
+
+  /// `Play Content`
+  String get play_content {
+    return Intl.message('Play Content', name: 'play_content', desc: '', args: []);
+  }
+
+  /// `Play`
+  String get play {
+    return Intl.message('Play', name: 'play', desc: '', args: []);
+  }
+
+  /// `Stop`
+  String get stop {
+    return Intl.message('Stop', name: 'stop', desc: '', args: []);
+  }
+
+  /// `Smart Light`
+  String get smart_light {
+    return Intl.message('Smart Light', name: 'smart_light', desc: '', args: []);
+  }
+
+  /// `Light Color`
+  String get light_color {
+    return Intl.message('Light Color', name: 'light_color', desc: '', args: []);
+  }
+
+  /// `Light Mode`
+  String get light_mode {
+    return Intl.message('Light Mode', name: 'light_mode', desc: '', args: []);
+  }
+
+  /// `Turn On`
+  String get turn_on {
+    return Intl.message('Turn On', name: 'turn_on', desc: '', args: []);
+  }
+
+  /// `Turn Off`
+  String get turn_off {
+    return Intl.message('Turn Off', name: 'turn_off', desc: '', args: []);
+  }
+
+  /// `Apply`
+  String get apply {
+    return Intl.message('Apply', name: 'apply', desc: '', args: []);
+  }
+
+  /// `System Status`
+  String get system_status {
+    return Intl.message('System Status', name: 'system_status', desc: '', args: []);
+  }
+
+  /// `MQTT Connection`
+  String get mqtt_connection {
+    return Intl.message('MQTT Connection', name: 'mqtt_connection', desc: '', args: []);
+  }
+
+  /// `Connected`
+  String get connected {
+    return Intl.message('Connected', name: 'connected', desc: '', args: []);
+  }
+
+  /// `Disconnected`
+  String get disconnected {
+    return Intl.message('Disconnected', name: 'disconnected', desc: '', args: []);
+  }
+
+  /// `Speaker Tool`
+  String get speaker_tool {
+    return Intl.message('Speaker Tool', name: 'speaker_tool', desc: '', args: []);
+  }
+
+  /// `Light Tool`
+  String get light_tool {
+    return Intl.message('Light Tool', name: 'light_tool', desc: '', args: []);
+  }
+
+  /// `Scene Tool`
+  String get scene_tool {
+    return Intl.message('Scene Tool', name: 'scene_tool', desc: '', args: []);
+  }
+
+  /// `Brightness`
+  String get brightness {
+    return Intl.message('Brightness', name: 'brightness', desc: '', args: []);
+  }
+
+  /// `Volume`
+  String get volume {
+    return Intl.message('Volume', name: 'volume', desc: '', args: []);
+  }
+
+  /// `Active Connections`
+  String get active_connections {
+    return Intl.message('Active Connections', name: 'active_connections', desc: '', args: []);
+  }
+
+  /// `Messages Sent`
+  String get messages_sent {
+    return Intl.message('Messages Sent', name: 'messages_sent', desc: '', args: []);
+  }
+
+  /// `Messages Received`
+  String get messages_received {
+    return Intl.message('Messages Received', name: 'messages_received', desc: '', args: []);
+  }
+
+  /// `Audio Devices`
+  String get audio_devices {
+    return Intl.message('Audio Devices', name: 'audio_devices', desc: '', args: []);
+  }
+
+  /// `Message Traffic`
+  String get message_traffic {
+    return Intl.message('Message Traffic', name: 'message_traffic', desc: '', args: []);
+  }
+
+  /// `Connection Count`
+  String get connection_count {
+    return Intl.message('Connection Count', name: 'connection_count', desc: '', args: []);
+  }
+
+  /// `Latency`
+  String get latency {
+    return Intl.message('Latency', name: 'latency', desc: '', args: []);
+  }
+
+  /// `No Data`
+  String get no_data {
+    return Intl.message('No Data', name: 'no_data', desc: '', args: []);
+  }
+
+  /// `No Active Connections`
+  String get no_active_connections {
+    return Intl.message('No Active Connections', name: 'no_active_connections', desc: '', args: []);
+  }
+
+  /// `Audio Statistics`
+  String get audio_statistics {
+    return Intl.message('Audio Statistics', name: 'audio_statistics', desc: '', args: []);
+  }
+
+  /// `Active Devices`
+  String get active_device_count {
+    return Intl.message('Active Devices', name: 'active_device_count', desc: '', args: []);
+  }
+
+  /// `Streaming Devices`
+  String get streaming_device_count {
+    return Intl.message('Streaming Devices', name: 'streaming_device_count', desc: '', args: []);
+  }
+
+  /// `Buffer Status`
+  String get buffer_status {
+    return Intl.message('Buffer Status', name: 'buffer_status', desc: '', args: []);
+  }
+
+  /// `Refresh Data`
+  String get refresh_data {
+    return Intl.message('Refresh Data', name: 'refresh_data', desc: '', args: []);
+  }
+
+  /// `Video Stream`
+  String get video_stream {
+    return Intl.message('Video Stream', name: 'video_stream', desc: '', args: []);
+  }
+
+  /// `Audio Stream`
+  String get audio_stream {
+    return Intl.message('Audio Stream', name: 'audio_stream', desc: '', args: []);
+  }
+
+  /// `Two-way Intercom`
+  String get intercom {
+    return Intl.message('Two-way Intercom', name: 'intercom', desc: '', args: []);
+  }
+
+  /// `Reconnect`
+  String get reconnect {
+    return Intl.message('Reconnect', name: 'reconnect', desc: '', args: []);
+  }
+
+  /// `In Call`
+  String get in_call {
+    return Intl.message('In Call', name: 'in_call', desc: '', args: []);
+  }
+
+  /// `Speaker`
+  String get speaker {
+    return Intl.message('Speaker', name: 'speaker', desc: '', args: []);
+  }
+
+  /// `Listener`
+  String get listener {
+    return Intl.message('Listener', name: 'listener', desc: '', args: []);
+  }
+
+  /// `Hang Up`
+  String get hang_up {
+    return Intl.message('Hang Up', name: 'hang_up', desc: '', args: []);
+  }
+
+  /// `Start Intercom`
+  String get start_intercom {
+    return Intl.message('Start Intercom', name: 'start_intercom', desc: '', args: []);
+  }
+
+  /// `Mute`
+  String get mute {
+    return Intl.message('Mute', name: 'mute', desc: '', args: []);
+  }
+
+  /// `Unmute`
+  String get unmute {
+    return Intl.message('Unmute', name: 'unmute', desc: '', args: []);
+  }
+
+  /// `Connection Statistics`
+  String get connection_statistics {
+    return Intl.message('Connection Statistics', name: 'connection_statistics', desc: '', args: []);
+  }
+
+  /// `Video Connection`
+  String get video_connection {
+    return Intl.message('Video Connection', name: 'video_connection', desc: '', args: []);
+  }
+
+  /// `Audio Connection`
+  String get audio_connection {
+    return Intl.message('Audio Connection', name: 'audio_connection', desc: '', args: []);
+  }
+
+  /// `Intercom Connection`
+  String get intercom_connection {
+    return Intl.message('Intercom Connection', name: 'intercom_connection', desc: '', args: []);
+  }
+
+  /// `Frames Received`
+  String get frames_received {
+    return Intl.message('Frames Received', name: 'frames_received', desc: '', args: []);
+  }
+
+  /// `Audio Chunks Received`
+  String get audio_chunks_received {
+    return Intl.message('Audio Chunks Received', name: 'audio_chunks_received', desc: '', args: []);
+  }
+
+  /// `Normal`
+  String get normal {
+    return Intl.message('Normal', name: 'normal', desc: '', args: []);
+  }
+
+  /// `Disconnected`
+  String get abnormal {
+    return Intl.message('Disconnected', name: 'abnormal', desc: '', args: []);
+  }
+
+  /// `Detection Time Test`
+  String get detection_time_test {
+    return Intl.message('Detection Time Test', name: 'detection_time_test', desc: '', args: []);
+  }
+
+  /// `Notifications Enabled`
+  String get notifications_enabled {
+    return Intl.message('Notifications Enabled', name: 'notifications_enabled', desc: '', args: []);
+  }
+
+  /// `You will receive app notifications!`
+  String get notifications_enabled_body {
+    return Intl.message('You will receive app notifications!', name: 'notifications_enabled_body', desc: '', args: []);
+  }
+
+  /// `Select Device`
+  String get select_device {
+    return Intl.message('Select Device', name: 'select_device', desc: '', args: []);
+  }
+
+  /// `Enable Video Detection`
+  String get enable_video_detection {
+    return Intl.message('Enable Video Detection', name: 'enable_video_detection', desc: '', args: []);
+  }
+
+  /// `Prompt`
+  String get prompt {
+    return Intl.message('Prompt', name: 'prompt', desc: '', args: []);
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message('Confirm', name: 'confirm', desc: '', args: []);
+  }
+
+  /// `Operation Successful`
+  String get operation_success {
+    return Intl.message('Operation Successful', name: 'operation_success', desc: '', args: []);
+  }
+
+  /// `Operation Failed`
+  String get operation_failed {
+    return Intl.message('Operation Failed', name: 'operation_failed', desc: '', args: []);
+  }
+
+  /// `Unknown Operation`
+  String get unknown_operation {
+    return Intl.message('Unknown Operation', name: 'unknown_operation', desc: '', args: []);
+  }
+
+  /// `Camera address not found, please check device connection.`
+  String get no_camera_address {
+    return Intl.message('Camera address not found, please check device connection.', name: 'no_camera_address', desc: '', args: []);
+  }
+
+  /// `White Noise`
+  String get whitenoise {
+    return Intl.message('White Noise', name: 'whitenoise', desc: '', args: []);
+  }
+
+  /// `Lullaby`
+  String get lullaby {
+    return Intl.message('Lullaby', name: 'lullaby', desc: '', args: []);
+  }
+
+  /// `Ocean Waves`
+  String get ocean {
+    return Intl.message('Ocean Waves', name: 'ocean', desc: '', args: []);
+  }
+
+  /// `Rain`
+  String get rain {
+    return Intl.message('Rain', name: 'rain', desc: '', args: []);
+  }
+
+  /// `Heartbeat`
+  String get heartbeat {
+    return Intl.message('Heartbeat', name: 'heartbeat', desc: '', args: []);
+  }
+
+  /// `Bird Chirping`
+  String get bird {
+    return Intl.message('Bird Chirping', name: 'bird', desc: '', args: []);
+  }
+
+  /// `Warm Light`
+  String get warm_light {
+    return Intl.message('Warm Light', name: 'warm_light', desc: '', args: []);
+  }
+
+  /// `Cool Light`
+  String get cool_light {
+    return Intl.message('Cool Light', name: 'cool_light', desc: '', args: []);
+  }
+
+  /// `Night Light`
+  String get night_light {
+    return Intl.message('Night Light', name: 'night_light', desc: '', args: []);
+  }
+
+  /// `Soft Light`
+  String get soft_light {
+    return Intl.message('Soft Light', name: 'soft_light', desc: '', args: []);
+  }
+
+  /// `Normal Mode`
+  String get normal_mode {
+    return Intl.message('Normal Mode', name: 'normal_mode', desc: '', args: []);
+  }
+
+  /// `Night Mode`
+  String get night_mode {
+    return Intl.message('Night Mode', name: 'night_mode', desc: '', args: []);
+  }
+
+  /// `Reading Mode`
+  String get reading_mode {
+    return Intl.message('Reading Mode', name: 'reading_mode', desc: '', args: []);
+  }
+
+  /// `Sleep Mode`
+  String get sleep_mode_light {
+    return Intl.message('Sleep Mode', name: 'sleep_mode_light', desc: '', args: []);
+  }
+
+  /// `General`
+  String get general {
+    return Intl.message('General', name: 'general', desc: '', args: []);
+  }
+
+  /// `Feeding`
+  String get feeding {
+    return Intl.message('Feeding', name: 'feeding', desc: '', args: []);
+  }
+
+  /// `Safety`
+  String get safety {
+    return Intl.message('Safety', name: 'safety', desc: '', args: []);
+  }
+
+  /// `Health`
+  String get health {
+    return Intl.message('Health', name: 'health', desc: '', args: []);
+  }
+
+  /// `Development`
+  String get development {
+    return Intl.message('Development', name: 'development', desc: '', args: []);
+  }
+
+  /// `ms`
+  String get ms_unit {
+    return Intl.message('ms', name: 'ms_unit', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -5,10 +5,10 @@ import 'package:vibration/vibration.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:my_first_app/models/notification_model.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:async';
 
+import '../models/notification_model.dart';
 import 'api_service.dart'; // 引入 Timer
 
 class NotificationService {

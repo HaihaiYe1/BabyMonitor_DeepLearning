@@ -183,9 +183,13 @@ class _SmartHomePageState extends State<SmartHomePage> {
 
   void _showResultSnackBar(Map<String, dynamic> result) {
     final success = result['success'] == true;
-    final message = success 
-        ? result['result']?['message'] ?? '操作成功'
+    final  message;
+    if (success) {
+      message = result['result']?['message'] ?? '操作成功'
         : result['error'] ?? '操作失败';
+    } else {
+      message = "null";
+    }
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

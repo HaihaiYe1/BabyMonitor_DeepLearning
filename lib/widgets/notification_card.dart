@@ -1,7 +1,7 @@
 //只提供关于通知卡片的UI
 
 import 'package:flutter/material.dart';
-import 'package:my_first_app/models/notification_model.dart';
+import '../models/notification_model.dart';
 
 class NotificationCard extends StatelessWidget {
   final NotificationModel record;

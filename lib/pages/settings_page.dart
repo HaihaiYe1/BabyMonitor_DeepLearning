@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_first_app/services/notification_service.dart';
-import 'package:my_first_app/providers/language_provider.dart'; // 导入语言管理器
-import 'package:my_first_app/generated/l10n.dart';
+import '../services/notification_service.dart';
+import '../providers/language_provider.dart'; // 导入语言管理器
+import '../generated/l10n.dart';
 import 'package:http/http.dart' as http;
 
 import '../services/api_service.dart';
