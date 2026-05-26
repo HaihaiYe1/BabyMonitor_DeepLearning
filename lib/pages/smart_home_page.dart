@@ -342,7 +342,7 @@ class _SmartHomePageState extends State<SmartHomePage> {
           children: [
             Row(
               children: [
-                Icon(Icons.scene, color: Colors.purple[700]),
+                Icon(Icons.movie_creation, color: Colors.purple[700]),
                 const SizedBox(width: 8),
                 Text(
                   '场景模式',
@@ -385,7 +385,7 @@ class _SmartHomePageState extends State<SmartHomePage> {
       case 'comfort': return Icons.child_care;
       case 'alert': return Icons.warning;
       case 'calm': return Icons.spa;
-      default: return Icons.scene;
+      default: return Icons.movie_creation;
     }
   }
 

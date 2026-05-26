@@ -254,7 +254,7 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
           child: _buildStatCard(
             '消息接收',
             '${ws['messages_received'] ?? 0}',
-            Icons.receive_shares,
+            Icons.call_received,
             Colors.orange,
           ),
         ),
