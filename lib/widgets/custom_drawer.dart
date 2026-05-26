@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../services/auth_service.dart';
+import '../services/api_service.dart';
 import '../services/notification_service.dart';
 import '../providers/language_provider.dart';
 import '../generated/l10n.dart';
@@ -41,25 +42,29 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
 
   Future<void> _loadUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _username = prefs.getString('username') ?? 'Guest';
-      _email = prefs.getString('email') ?? '';
-      _avatarPath = prefs.getString('avatar');
-    });
+    if (mounted) {
+      setState(() {
+        _username = prefs.getString('username') ?? 'Guest';
+        _email = prefs.getString('email') ?? '';
+        _avatarPath = prefs.getString('avatar');
+      });
+    }
   }
 
   Future<void> _loadSettings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      setState(() {
-        _isNotificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
-        _selectedLanguage = prefs.getString('language') ?? '中文';
-        _isDetectionEnabled = prefs.getBool('detection_enabled') ?? false;
-        _selectedDeviceId = prefs.getString('selected_device_id');
-      });
-      ref.read(languageProvider.notifier).state = _selectedLanguage;
+      if (mounted) {
+        setState(() {
+          _isNotificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
+          _selectedLanguage = prefs.getString('language') ?? '中文';
+          _isDetectionEnabled = prefs.getBool('detection_enabled') ?? false;
+          _selectedDeviceId = prefs.getString('selected_device_id');
+        });
+        ref.read(languageProvider.notifier).state = _selectedLanguage;
+      }
     } catch (e) {
-      print("Error loading settings: $e");
+      debugPrint("Error loading settings: $e");
     }
   }
 
@@ -81,34 +86,33 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
   Future<void> _updateDetectionSetting(bool value) async {
     setState(() => _isDetectionEnabled = value);
     await _updateSetting('detection_enabled', value);
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-
+    
     if (_selectedDeviceId == null) {
-      print("请先选择设备！");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('请先选择设备')),
+        );
+      }
       return;
     }
 
-    print("已选择设备 ID: $_selectedDeviceId");
-
-    final url = Uri.parse(
-        'http://10.0.2.2:8000/video/${value ? "start" : "stop"}-detect?device_id=${int.parse(_selectedDeviceId!)}');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
     try {
+      final url = Uri.parse(ApiService.videoDetectToggle(value, int.parse(_selectedDeviceId!)));
       final response = await http.post(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
+        headers: {'Authorization': 'Bearer $token'},
       );
 
       if (response.statusCode == 200) {
-        print("视频检测已${value ? "启用" : "关闭"}");
+        debugPrint("视频检测已${value ? "启用" : "关闭"}");
       } else {
-        print("!!!!!!!!!!后端请求失败：${response.statusCode}");
+        debugPrint("后端请求失败：${response.statusCode}");
       }
     } catch (e) {
-      print("检测接口调用失败: $e");
+      debugPrint("检测接口调用失败: $e");
     }
   }
 
@@ -121,7 +125,7 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
         await prefs.setString(key, value);
       }
     } catch (e) {
-      print("Error updating setting [$key]: $e");
+      debugPrint("Error updating setting [$key]: $e");
     }
   }
 
@@ -129,31 +133,26 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
-      if (token == null) {
-        print("请先登录！");
-        return;
-      }
+      if (token == null) return;
 
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/device/list'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
+        Uri.parse(ApiService.deviceList),
+        headers: {'Authorization': 'Bearer $token'},
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        setState(() {
-          _deviceList = data.map((d) => {
-            'id': d['id'].toString(),
-            'name': d['name'] ?? '设备 ${d['id']}',
-          }).toList();
-        });
-      } else {
-        print("加载设备失败：${response.statusCode}");
+        if (mounted) {
+          setState(() {
+            _deviceList = data.map((d) => {
+              'id': d['id'].toString(),
+              'name': d['name'] ?? '设备 ${d['id']}',
+            }).toList();
+          });
+        }
       }
     } catch (e) {
-      print("设备列表请求失败: $e");
+      debugPrint("设备列表请求失败: $e");
     }
   }
 
@@ -193,18 +192,14 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                 _buildInfoTile(
                   title: S.of(context).manage_account,
                   icon: Icons.person,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/account');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/account'),
                 ),
                 const SizedBox(height: 8),
                 _buildSectionTitle('设备管理'),
                 _buildInfoTile(
                   title: S.of(context).manage_devices,
                   icon: Icons.devices,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/devices');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/devices'),
                 ),
                 _buildDropdownTile(
                   title: '选择设备',
@@ -235,8 +230,8 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                   title: S.of(context).language,
                   icon: Icons.language,
                   value: _selectedLanguage,
-                  options: ['English', '中文'],
-                  displayNames: ['English', '中文'],
+                  options: const ['English', '中文'],
+                  displayNames: const ['English', '中文'],
                   onChanged: (value) async {
                     if (value != null) {
                       setState(() => _selectedLanguage = value);
@@ -250,46 +245,34 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                 _buildInfoTile(
                   title: 'AI Agent对话',
                   icon: Icons.chat,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/chat');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/chat'),
                 ),
                 _buildInfoTile(
                   title: '育儿建议',
                   icon: Icons.lightbulb,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/advice');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/advice'),
                 ),
                 _buildInfoTile(
                   title: '智能家居控制',
                   icon: Icons.home,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/smart-home');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/smart-home'),
                 ),
                 _buildInfoTile(
                   title: '监控仪表盘',
                   icon: Icons.dashboard,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/monitoring');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/monitoring'),
                 ),
                 const SizedBox(height: 8),
                 _buildSectionTitle('支持与帮助'),
                 _buildInfoTile(
                   title: S.of(context).customer_support,
                   icon: Icons.headset_mic,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/support');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/support'),
                 ),
                 _buildInfoTile(
                   title: S.of(context).faq,
                   icon: Icons.help,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/faq');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/faq'),
                 ),
                 const SizedBox(height: 8),
                 _buildSectionTitle('关于'),
@@ -320,8 +303,7 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         title,
-        style: const TextStyle(
-            fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.black87),
+        style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.black87),
       ),
     );
   }
@@ -389,10 +371,7 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
             ? Text(value, style: const TextStyle(color: Colors.grey))
             : const Icon(Icons.arrow_forward_ios, size: 16.0),
         onTap: () {
-          // 如果点击的是"app_version"，弹出提示框
-          if (title == S
-              .of(context)
-              .app_version) {
+          if (title == S.of(context).app_version) {
             _showAppVersionDialog(context);
           } else {
             onTap?.call();
@@ -402,7 +381,6 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
     );
   }
 
-// 显示app版本的提示框
   void _showAppVersionDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -412,9 +390,7 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
           content: const Text('疯狂星期四，V我50！'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('确定'),
             ),
           ],
