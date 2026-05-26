@@ -268,6 +268,13 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                     Navigator.pushNamed(context, '/smart-home');
                   },
                 ),
+                _buildInfoTile(
+                  title: '监控仪表盘',
+                  icon: Icons.dashboard,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/monitoring');
+                  },
+                ),
                 const SizedBox(height: 8),
                 _buildSectionTitle('支持与帮助'),
                 _buildInfoTile(

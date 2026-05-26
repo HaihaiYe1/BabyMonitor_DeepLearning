@@ -12,6 +12,7 @@ import '../pages/chat_page.dart';
 import '../pages/advice_page.dart';
 import '../pages/smart_home_page.dart';
 import '../pages/live_monitor_page.dart';
+import '../pages/monitoring_dashboard.dart';
 
 
 
@@ -33,5 +34,7 @@ class AppRoutes {
     '/advice': (context) => const AdvicePage(),
     // 智能家居控制
     '/smart-home': (context) => const SmartHomePage(),
+    // 监控仪表盘
+    '/monitoring': (context) => const MonitoringDashboard(),
   };
 }
