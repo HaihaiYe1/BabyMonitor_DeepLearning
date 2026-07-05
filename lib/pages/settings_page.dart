@@ -46,7 +46,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
       ref.read(languageProvider.notifier).state = _selectedLanguage;
     } catch (e) {
-      print("Error loading settings: $e");
+      debugPrint("加载设置错误: $e");
     }
   }
 
@@ -76,33 +76,30 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     setState(() => _isDetectionEnabled = value);
     await _updateSetting('detection_enabled', value);
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token'); // 获取 token
+    final token = prefs.getString('token');
 
     if (_selectedDeviceId == null) {
-      print("请先选择设备！");
+      debugPrint("请先选择设备");
       return;
     }
 
-  // 添加设备加载成功的 print
-  print("已选择设备 ID: $_selectedDeviceId");
+    final url = Uri.parse(ApiService.videoDetectToggle(value, int.parse(_selectedDeviceId!)));
 
-  final url = Uri.parse(ApiService.videoDetectToggle(value, int.parse(_selectedDeviceId!)));
-
-  try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token', // 请替换成实际的 token
-      },
-    );
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
 
       if (response.statusCode == 200) {
-        print("视频检测已${value ? "启用" : "关闭"}");
+        debugPrint("视频检测已${value ? "启用" : "关闭"}");
       } else {
-        print("!!!!!!!!!!后端请求失败：${response.statusCode}");
+        debugPrint("后端请求失败：${response.statusCode}");
       }
     } catch (e) {
-      print("检测接口调用失败: $e");
+      debugPrint("检测接口调用失败: $e");
     }
   }
 
@@ -116,25 +113,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         await prefs.setString(key, value);
       }
     } catch (e) {
-      print("Error updating setting [$key]: $e");
+      debugPrint("更新设置错误 [$key]: $e");
     }
   }
 
 Future<void> _loadDevices() async {
   try {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token'); // 获取 token
+    final token = prefs.getString('token');
 
-    // 如果没有 token，提示用户登录
     if (token == null) {
-      print("请先登录！");
+      debugPrint("请先登录");
       return;
     }
 
     final response = await http.get(
       Uri.parse(ApiService.deviceList),
       headers: {
-        'Authorization': 'Bearer $token', // 将 token 添加到请求头中
+        'Authorization': 'Bearer $token',
       },
     );
 
@@ -147,10 +143,10 @@ Future<void> _loadDevices() async {
             }).toList();
       });
     } else {
-      print("加载设备失败：${response.statusCode}");
+      debugPrint("加载设备失败：${response.statusCode}");
     }
   } catch (e) {
-    print("设备列表请求失败: $e");
+    debugPrint("设备列表请求失败: $e");
   }
 }
 
@@ -387,8 +383,8 @@ Future<void> _loadDevices() async {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('提示'),
-          content: const Text('疯狂星期四，V我50！'),
+          title: Text(S.of(context).app_version),
+          content: const Text('Baby Monitor v1.0.0\n\n基于AI的婴儿智能看护系统'),
           actions: [
             TextButton(
               onPressed: () {

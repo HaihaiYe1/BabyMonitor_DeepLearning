@@ -141,15 +141,15 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _buildGlassMorphismContainer({required Widget child}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2), // 半透明背景
+        color: Colors.white.withValues(alpha: 0.2), // 半透明背景
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.4), // 半透明边框
+          color: Colors.white.withValues(alpha: 0.4), // 半透明边框
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1), // 柔和阴影
+            color: Colors.black.withValues(alpha: 0.1), // 柔和阴影
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -173,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
         hintText: hintText,
         hintStyle: TextStyle(color: AppColors.secondaryText), // 提示文字颜色
         filled: true,
-        fillColor: Colors.white.withOpacity(0.5), // 输入框背景色
+        fillColor: Colors.white.withValues(alpha: 0.5), // 输入框背景色
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -189,12 +189,12 @@ class _RegisterPageState extends State<RegisterPage> {
   }) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white.withOpacity(0.7), // 按钮背景色
+        backgroundColor: Colors.white.withValues(alpha: 0.7), // 按钮背景色
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-        shadowColor: Colors.black.withOpacity(0.2), // 按钮阴影
+        shadowColor: Colors.black.withValues(alpha: 0.2), // 按钮阴影
         elevation: 5,
       ),
       onPressed: onPressed,

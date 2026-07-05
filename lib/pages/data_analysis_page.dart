@@ -54,7 +54,7 @@ class _DataAnalysisPageState extends State<DataAnalysisPage> {
       appBar: AppBar(
         title: Text(S.of(context).titleDataAnalysis),
         centerTitle: true,
-        backgroundColor: Colors.white.withOpacity(0.8),
+        backgroundColor: Colors.white.withValues(alpha: 0.8),
         elevation: 0,
       ),
       body: SafeArea(

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import '../services/smart_home_service.dart';
 import '../generated/l10n.dart';
+import '../theme/serene_colors.dart';
+import '../theme/serene_spacing.dart';
+import '../theme/serene_typography.dart';
+import '../widgets/glass_widgets.dart';
+import '../widgets/serene_widgets.dart';
 
 class SmartHomePage extends StatefulWidget {
   const SmartHomePage({Key? key}) : super(key: key);
@@ -27,26 +32,26 @@ class _SmartHomePageState extends State<SmartHomePage> {
   String _selectedLightMode = 'normal';
   
   final List<Map<String, dynamic>> _speakerContents = [
-    {'value': 'whitenoise', 'name': '白噪音', 'icon': Icons.noise_aware},
-    {'value': 'lullaby', 'name': '摇篮曲', 'icon': Icons.music_note},
-    {'value': 'ocean', 'name': '海浪声', 'icon': Icons.waves},
-    {'value': 'rain', 'name': '雨声', 'icon': Icons.water_drop},
-    {'value': 'heartbeat', 'name': '心跳声', 'icon': Icons.favorite},
-    {'value': 'bird', 'name': '鸟鸣声', 'icon': Icons.flutter_dash},
+    {'value': 'whitenoise', 'name': 'White Noise', 'icon': Icons.noise_aware},
+    {'value': 'lullaby', 'name': 'Lullaby', 'icon': Icons.music_note},
+    {'value': 'ocean', 'name': 'Ocean', 'icon': Icons.waves},
+    {'value': 'rain', 'name': 'Rain', 'icon': Icons.water_drop},
+    {'value': 'heartbeat', 'name': 'Heartbeat', 'icon': Icons.favorite},
+    {'value': 'bird', 'name': 'Bird', 'icon': Icons.flutter_dash},
   ];
   
   final List<Map<String, dynamic>> _lightColors = [
-    {'value': 'warm', 'name': '暖光', 'color': Colors.orange},
-    {'value': 'cool', 'name': '冷光', 'color': Colors.blue},
-    {'value': 'night', 'name': '夜灯', 'color': Colors.amber},
-    {'value': 'soft', 'name': '柔光', 'color': Colors.yellow},
+    {'value': 'warm', 'name': 'Warm', 'color': Colors.orange},
+    {'value': 'cool', 'name': 'Cool', 'color': Colors.blue},
+    {'value': 'night', 'name': 'Night', 'color': Colors.amber},
+    {'value': 'soft', 'name': 'Soft', 'color': Colors.yellow},
   ];
   
   final List<Map<String, dynamic>> _lightModes = [
-    {'value': 'normal', 'name': '普通模式', 'icon': Icons.light_mode},
-    {'value': 'night', 'name': '夜灯模式', 'icon': Icons.nightlight},
-    {'value': 'reading', 'name': '阅读模式', 'icon': Icons.menu_book},
-    {'value': 'sleep', 'name': '睡眠模式', 'icon': Icons.bedtime},
+    {'value': 'normal', 'name': 'Normal', 'icon': Icons.light_mode},
+    {'value': 'night', 'name': 'Night', 'icon': Icons.nightlight},
+    {'value': 'reading', 'name': 'Reading', 'icon': Icons.menu_book},
+    {'value': 'sleep', 'name': 'Sleep', 'icon': Icons.bedtime},
   ];
 
   @override
@@ -70,7 +75,10 @@ class _SmartHomePageState extends State<SmartHomePage> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('加载数据失败: $e')),
+        SnackBar(
+          content: Text('Failed to load data: $e'),
+          backgroundColor: SereneColors.error,
+        ),
       );
     } finally {
       setState(() {
@@ -95,7 +103,10 @@ class _SmartHomePageState extends State<SmartHomePage> {
       _showResultSnackBar(result);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('音箱控制失败: $e')),
+        SnackBar(
+          content: Text('Speaker control failed: $e'),
+          backgroundColor: SereneColors.error,
+        ),
       );
     } finally {
       setState(() {
@@ -120,7 +131,10 @@ class _SmartHomePageState extends State<SmartHomePage> {
       _showResultSnackBar(result);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('灯光控制失败: $e')),
+        SnackBar(
+          content: Text('Light control failed: $e'),
+          backgroundColor: SereneColors.error,
+        ),
       );
     } finally {
       setState(() {
@@ -139,7 +153,10 @@ class _SmartHomePageState extends State<SmartHomePage> {
       _showResultSnackBar(result);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('场景激活失败: $e')),
+        SnackBar(
+          content: Text('Scene activation failed: $e'),
+          backgroundColor: SereneColors.error,
+        ),
       );
     } finally {
       setState(() {
@@ -166,13 +183,16 @@ class _SmartHomePageState extends State<SmartHomePage> {
           result = await _smartHomeService.quickAlertMode();
           break;
         default:
-          result = {'success': false, 'error': '未知操作'};
+          result = {'success': false, 'error': 'Unknown action'};
       }
 
       _showResultSnackBar(result);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('快捷操作失败: $e')),
+        SnackBar(
+          content: Text('Quick action failed: $e'),
+          backgroundColor: SereneColors.error,
+        ),
       );
     } finally {
       setState(() {
@@ -183,18 +203,14 @@ class _SmartHomePageState extends State<SmartHomePage> {
 
   void _showResultSnackBar(Map<String, dynamic> result) {
     final success = result['success'] == true;
-    final  message;
-    if (success) {
-      message = result['result']?['message'] ?? '操作成功'
-        : result['error'] ?? '操作失败';
-    } else {
-      message = "null";
-    }
+    final message = success
+        ? (result['result']?['message'] ?? 'Operation successful')
+        : (result['error'] ?? 'Operation failed');
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: success ? Colors.green : Colors.red,
+        backgroundColor: success ? SereneColors.safe : SereneColors.error,
       ),
     );
   }
@@ -202,102 +218,599 @@ class _SmartHomePageState extends State<SmartHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).smart_home ?? '智能家居控制'),
-        backgroundColor: Colors.white.withOpacity(0.8),
-        elevation: 0,
+      extendBody: true,
+      backgroundColor: SereneColors.surface,
+      appBar: GlassAppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            child: const Icon(
+              Icons.arrow_back,
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
+        ),
+        title: Text(
+          'Smart Home',
+          style: SereneTypography.headlineMedium.copyWith(
+            color: SereneColors.primary,
+          ),
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadData,
-            tooltip: '刷新状态',
+          Padding(
+            padding: const EdgeInsets.only(right: SereneSpacing.sm),
+            child: SereneIconButton(
+              icon: Icons.refresh,
+              iconColor: SereneColors.onSurfaceVariant,
+              size: 40,
+              tooltip: 'Refresh status',
+              onPressed: _loadData,
+            ),
           ),
         ],
       ),
       body: _isLoading && _systemStatus == null
-          ? const Center(child: CircularProgressIndicator())
-          : Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFE3FDFD), Color(0xFFFFE6FA)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+          ? Center(
+              child: CircularProgressIndicator(
+                color: SereneColors.primary,
               ),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildQuickActions(),
-                    const SizedBox(height: 24),
-                    _buildSceneSection(),
-                    const SizedBox(height: 24),
-                    _buildSpeakerSection(),
-                    const SizedBox(height: 24),
-                    _buildLightSection(),
-                    const SizedBox(height: 24),
-                    _buildSystemStatus(),
-                  ],
-                ),
+            )
+          : SafeArea(
+              bottom: false,
+              child: Stack(
+                children: [
+                  // 背景色
+                  Container(
+                    color: SereneColors.surface,
+                  ),
+                  // 主内容
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(
+                      SereneSpacing.marginMobile,
+                      SereneSpacing.lg,
+                      SereneSpacing.marginMobile,
+                      SereneSpacing.xl,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 状态卡片
+                        _buildStatusCard(),
+                        const SizedBox(height: SereneSpacing.lg),
+                        // 音箱和灯光区域
+                        _buildSpeakerAndLightGrid(),
+                        const SizedBox(height: SereneSpacing.lg),
+                        // 场景区域
+                        _buildSceneSection(),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
     );
   }
 
-  Widget _buildQuickActions() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+  /// 构建状态卡片
+  Widget _buildStatusCard() {
+    final mqtt = _systemStatus?['mqtt'] as Map<String, dynamic>? ?? {};
+    final connected = mqtt['connected'] == true;
+
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.flash_on, color: Colors.amber[700]),
-                const SizedBox(width: 8),
                 Text(
-                  '快捷操作',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
+                  'NURSERY STATUS',
+                  style: SereneTypography.labelMedium.copyWith(
+                    color: SereneColors.outline,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: SereneSpacing.sm),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.thermostat,
+                      color: SereneColors.primary,
+                      size: 24,
+                    ),
+                    const SizedBox(width: SereneSpacing.sm),
+                    Text(
+                      '22°C',
+                      style: SereneTypography.headlineLarge.copyWith(
+                        color: SereneColors.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: SereneSpacing.xs),
+                Text(
+                  'Light: On (Warm)',
+                  style: SereneTypography.bodyMedium.copyWith(
+                    color: SereneColors.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildQuickButton(
-                    '睡眠模式',
-                    Icons.bedtime,
-                    Colors.indigo,
-                    () => _quickAction('sleep'),
+          ),
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: SereneColors.secondaryContainer.withValues(alpha: 0.5),
+            ),
+            child: const Icon(
+              Icons.cloud_outlined,
+              size: 32,
+              color: SereneColors.onSecondaryContainer,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建音箱和灯光网格
+  Widget _buildSpeakerAndLightGrid() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          // 桌面端：两列布局
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _buildSpeakerSection()),
+              const SizedBox(width: SereneSpacing.lg),
+              Expanded(child: _buildLightSection()),
+            ],
+          );
+        } else {
+          // 移动端：单列布局
+          return Column(
+            children: [
+              _buildSpeakerSection(),
+              const SizedBox(height: SereneSpacing.lg),
+              _buildLightSection(),
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  /// 构建音箱区域
+  Widget _buildSpeakerSection() {
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题和开关
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: SereneColors.primaryContainer.withValues(alpha: 0.3),
+                    ),
+                    child: const Icon(
+                      Icons.speaker_outlined,
+                      size: 20,
+                      color: SereneColors.primary,
+                    ),
+                  ),
+                  const SizedBox(width: SereneSpacing.sm),
+                  Text(
+                    'Speaker',
+                    style: SereneTypography.headlineSmall.copyWith(
+                      color: SereneColors.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+              // 开关
+              _buildToggle(true, (value) {
+                // TODO: 控制音箱开关
+              }),
+            ],
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          // 声音选择
+          SizedBox(
+            height: 40,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _speakerContents.length,
+              itemBuilder: (context, index) {
+                final content = _speakerContents[index];
+                final isSelected = _selectedSpeakerContent == content['value'];
+                return Padding(
+                  padding: const EdgeInsets.only(right: SereneSpacing.sm),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedSpeakerContent = content['value'];
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: SereneSpacing.md,
+                        vertical: SereneSpacing.sm,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? SereneColors.primary
+                            : SereneColors.surfaceContainer,
+                        borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.transparent
+                              : SereneColors.outlineVariant.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        content['name'],
+                        style: SereneTypography.labelMedium.copyWith(
+                          color: isSelected
+                              ? SereneColors.onPrimary
+                              : SereneColors.onSurface,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          // 播放控制
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 停止按钮
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: SereneColors.outlineVariant.withValues(alpha: 0.3),
+                    width: 1,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildQuickButton(
-                    '安抚模式',
-                    Icons.child_care,
-                    Colors.pink,
-                    () => _quickAction('comfort'),
+                child: IconButton(
+                  icon: const Icon(Icons.stop_outlined),
+                  onPressed: _isLoading ? null : () => _controlSpeaker('stop'),
+                  color: SereneColors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: SereneSpacing.lg),
+              // 播放按钮
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: SereneColors.primary,
+                  boxShadow: [
+                    BoxShadow(
+                      color: SereneColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.play_arrow),
+                  onPressed: _isLoading ? null : () => _controlSpeaker('play'),
+                  color: SereneColors.onPrimary,
+                  iconSize: 32,
+                ),
+              ),
+              const SizedBox(width: SereneSpacing.lg),
+              // 定时按钮
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SereneSpacing.md,
+                  vertical: SereneSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+                  border: Border.all(
+                    color: SereneColors.outlineVariant.withValues(alpha: 0.3),
+                    width: 1,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildQuickButton(
-                    '警报模式',
-                    Icons.warning,
-                    Colors.red,
-                    () => _quickAction('alert'),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.timer_outlined,
+                      size: 16,
+                      color: SereneColors.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$_speakerDuration min',
+                      style: SereneTypography.labelMedium.copyWith(
+                        color: SereneColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          // 音量控制
+          Row(
+            children: [
+              Icon(
+                Icons.volume_down_outlined,
+                color: SereneColors.outline,
+                size: 20,
+              ),
+              Expanded(
+                child: SliderTheme(
+                  data: SliderThemeData(
+                    activeTrackColor: SereneColors.primaryContainer,
+                    inactiveTrackColor: SereneColors.surfaceContainerHigh,
+                    thumbColor: Colors.white,
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 10,
+                    ),
+                    overlayShape: const RoundSliderOverlayShape(
+                      overlayRadius: 20,
+                    ),
+                  ),
+                  child: Slider(
+                    value: _speakerVolume.toDouble(),
+                    min: 0,
+                    max: 100,
+                    onChanged: (value) {
+                      setState(() {
+                        _speakerVolume = value.round();
+                      });
+                    },
                   ),
                 ),
-              ],
+              ),
+              Icon(
+                Icons.volume_up_outlined,
+                color: SereneColors.outline,
+                size: 20,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建灯光区域
+  Widget _buildLightSection() {
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题和开关
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: SereneColors.secondaryContainer.withValues(alpha: 0.5),
+                    ),
+                    child: const Icon(
+                      Icons.lightbulb_outlined,
+                      size: 20,
+                      color: SereneColors.secondary,
+                    ),
+                  ),
+                  const SizedBox(width: SereneSpacing.sm),
+                  Text(
+                    'Lighting',
+                    style: SereneTypography.headlineSmall.copyWith(
+                      color: SereneColors.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+              // 开关
+              _buildToggle(true, (value) {
+                // TODO: 控制灯光开关
+              }),
+            ],
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          // 模式选择
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: SereneColors.surfaceContainer,
+              borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+            ),
+            child: Row(
+              children: _lightModes.map((mode) {
+                final isSelected = _selectedLightMode == mode['value'];
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedLightMode = mode['value'];
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.white : Colors.transparent,
+                        borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Text(
+                        mode['name'],
+                        style: SereneTypography.labelMedium.copyWith(
+                          color: isSelected
+                              ? SereneColors.onSurface
+                              : SereneColors.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          // 颜色选择
+          Text(
+            'Color Temperature',
+            style: SereneTypography.labelMedium.copyWith(
+              color: SereneColors.outline,
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.sm),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: _lightColors.map((colorInfo) {
+              final isSelected = _selectedLightColor == colorInfo['value'];
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedLightColor = colorInfo['value'];
+                  });
+                },
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colorInfo['color'],
+                    border: Border.all(
+                      color: isSelected
+                          ? SereneColors.primary
+                          : SereneColors.outlineVariant.withValues(alpha: 0.2),
+                      width: isSelected ? 3 : 1,
+                    ),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: SereneColors.primary.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          // 亮度控制
+          Row(
+            children: [
+              Icon(
+                Icons.brightness_low_outlined,
+                color: SereneColors.outline,
+                size: 20,
+              ),
+              Expanded(
+                child: SliderTheme(
+                  data: SliderThemeData(
+                    activeTrackColor: SereneColors.secondaryContainer,
+                    inactiveTrackColor: SereneColors.surfaceContainerHigh,
+                    thumbColor: Colors.white,
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 10,
+                    ),
+                    overlayShape: const RoundSliderOverlayShape(
+                      overlayRadius: 20,
+                    ),
+                  ),
+                  child: Slider(
+                    value: _lightBrightness.toDouble(),
+                    min: 0,
+                    max: 100,
+                    onChanged: (value) {
+                      setState(() {
+                        _lightBrightness = value.round();
+                      });
+                    },
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.brightness_high_outlined,
+                color: SereneColors.outline,
+                size: 20,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建开关
+  Widget _buildToggle(bool value, ValueChanged<bool> onChanged) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Container(
+        width: 48,
+        height: 28,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: value ? SereneColors.primary : SereneColors.surfaceVariant,
+        ),
+        child: Stack(
+          children: [
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 200),
+              left: value ? 22 : 2,
+              top: 2,
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -305,72 +818,76 @@ class _SmartHomePageState extends State<SmartHomePage> {
     );
   }
 
-  Widget _buildQuickButton(String label, IconData icon, Color color, VoidCallback onPressed) {
-    return ElevatedButton(
-      onPressed: _isLoading ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, size: 28),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-
+  /// 构建场景区域
   Widget _buildSceneSection() {
     final scenes = _availableScenes?['scenes'] as Map<String, dynamic>? ?? {};
     
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.movie_creation, color: Colors.purple[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '场景模式',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Scenes',
+          style: SereneTypography.headlineSmall.copyWith(
+            color: SereneColors.onSurface,
+          ),
+        ),
+        const SizedBox(height: SereneSpacing.md),
+        SizedBox(
+          height: 140,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: scenes.length,
+            itemBuilder: (context, index) {
+              final entry = scenes.entries.elementAt(index);
+              final sceneName = entry.key;
+              final sceneInfo = entry.value as Map<String, dynamic>;
+              return Padding(
+                padding: const EdgeInsets.only(right: SereneSpacing.md),
+                child: _buildSceneCard(
+                  sceneName: sceneName,
+                  sceneInfo: sceneInfo,
                 ),
-              ],
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 构建场景卡片
+  Widget _buildSceneCard({
+    required String sceneName,
+    required Map<String, dynamic> sceneInfo,
+  }) {
+    return GestureDetector(
+      onTap: _isLoading ? null : () => _activateScene(sceneName),
+      child: GlassCard(
+        width: 140,
+        padding: const EdgeInsets.all(SereneSpacing.md),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _getSceneColor(sceneName).withValues(alpha: 0.2),
+              ),
+              child: Icon(
+                _getSceneIcon(sceneName),
+                size: 24,
+                color: _getSceneColor(sceneName),
+              ),
             ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: scenes.entries.map((entry) {
-                final sceneName = entry.key;
-                final sceneInfo = entry.value as Map<String, dynamic>;
-                return ActionChip(
-                  avatar: Icon(
-                    _getSceneIcon(sceneName),
-                    size: 18,
-                    color: _getSceneColor(sceneName),
-                  ),
-                  label: Text(sceneInfo['name'] ?? sceneName),
-                  onPressed: _isLoading ? null : () => _activateScene(sceneName),
-                );
-              }).toList(),
+            const SizedBox(height: SereneSpacing.sm),
+            Text(
+              sceneInfo['name'] ?? sceneName,
+              style: SereneTypography.labelLarge.copyWith(
+                color: SereneColors.onSurface,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -398,376 +915,5 @@ class _SmartHomePageState extends State<SmartHomePage> {
       case 'calm': return Colors.teal;
       default: return Colors.grey;
     }
-  }
-
-  Widget _buildSpeakerSection() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.speaker, color: Colors.blue[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '智能音箱',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // 内容选择
-            Text(
-              '播放内容',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _speakerContents.map((content) {
-                return ChoiceChip(
-                  avatar: Icon(
-                    content['icon'],
-                    size: 18,
-                    color: _selectedSpeakerContent == content['value']
-                        ? Colors.white
-                        : Colors.grey[700],
-                  ),
-                  label: Text(content['name']),
-                  selected: _selectedSpeakerContent == content['value'],
-                  selectedColor: Colors.blue,
-                  onSelected: (selected) {
-                    if (selected) {
-                      setState(() {
-                        _selectedSpeakerContent = content['value'];
-                      });
-                    }
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
-            // 音量控制
-            Row(
-              children: [
-                Text(
-                  '音量: $_speakerVolume',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                Expanded(
-                  child: Slider(
-                    value: _speakerVolume.toDouble(),
-                    min: 0,
-                    max: 100,
-                    divisions: 10,
-                    onChanged: (value) {
-                      setState(() {
-                        _speakerVolume = value.round();
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // 操作按钮
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : () => _controlSpeaker('play'),
-                    icon: const Icon(Icons.play_arrow),
-                    label: const Text('播放'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : () => _controlSpeaker('stop'),
-                    icon: const Icon(Icons.stop),
-                    label: const Text('停止'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLightSection() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.lightbulb, color: Colors.yellow[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '智能灯光',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // 颜色选择
-            Text(
-              '灯光颜色',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _lightColors.map((colorInfo) {
-                return ChoiceChip(
-                  avatar: CircleAvatar(
-                    backgroundColor: colorInfo['color'],
-                    radius: 10,
-                  ),
-                  label: Text(colorInfo['name']),
-                  selected: _selectedLightColor == colorInfo['value'],
-                  selectedColor: colorInfo['color'].withOpacity(0.3),
-                  onSelected: (selected) {
-                    if (selected) {
-                      setState(() {
-                        _selectedLightColor = colorInfo['value'];
-                      });
-                    }
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
-            // 模式选择
-            Text(
-              '灯光模式',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _lightModes.map((mode) {
-                return ChoiceChip(
-                  avatar: Icon(
-                    mode['icon'],
-                    size: 18,
-                    color: _selectedLightMode == mode['value']
-                        ? Colors.white
-                        : Colors.grey[700],
-                  ),
-                  label: Text(mode['name']),
-                  selected: _selectedLightMode == mode['value'],
-                  selectedColor: Colors.yellow[700],
-                  onSelected: (selected) {
-                    if (selected) {
-                      setState(() {
-                        _selectedLightMode = mode['value'];
-                      });
-                    }
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
-            // 亮度控制
-            Row(
-              children: [
-                Text(
-                  '亮度: $_lightBrightness',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                Expanded(
-                  child: Slider(
-                    value: _lightBrightness.toDouble(),
-                    min: 0,
-                    max: 100,
-                    divisions: 10,
-                    onChanged: (value) {
-                      setState(() {
-                        _lightBrightness = value.round();
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // 操作按钮
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : () => _controlLight('on'),
-                    icon: const Icon(Icons.light_mode),
-                    label: const Text('开灯'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.yellow[700],
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : () => _controlLight('off'),
-                    icon: const Icon(Icons.light_mode_outlined),
-                    label: const Text('关灯'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : () => _controlLight('mode'),
-                    icon: const Icon(Icons.settings),
-                    label: const Text('应用'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSystemStatus() {
-    final mqtt = _systemStatus?['mqtt'] as Map<String, dynamic>? ?? {};
-    final tools = _systemStatus?['tools'] as Map<String, dynamic>? ?? {};
-    
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.info, color: Colors.grey[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '系统状态',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildStatusRow('MQTT连接', mqtt['connected'] == true ? '已连接' : '未连接'),
-            _buildStatusRow('MQTT地址', '${mqtt['broker_host'] ?? 'N/A'}:${mqtt['broker_port'] ?? 'N/A'}'),
-            _buildStatusRow('音箱工具', tools['speaker'] ?? 'N/A'),
-            _buildStatusRow('灯光工具', tools['light'] ?? 'N/A'),
-            _buildStatusRow('场景工具', tools['scene'] ?? 'N/A'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatusRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -300,6 +300,16 @@ class S {
     );
   }
 
+  /// `Password length: 6-72 characters`
+  String get password_length_hint {
+    return Intl.message(
+      'Password length: 6-72 characters',
+      name: 'password_length_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Create Account`
   String get create_account {
     return Intl.message(
@@ -1292,47 +1302,92 @@ class S {
 
   /// `AI Agent Chat`
   String get agent_chat {
-    return Intl.message('AI Agent Chat', name: 'agent_chat', desc: '', args: []);
+    return Intl.message(
+      'AI Agent Chat',
+      name: 'agent_chat',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Parenting Advice`
   String get parenting_advice {
-    return Intl.message('Parenting Advice', name: 'parenting_advice', desc: '', args: []);
+    return Intl.message(
+      'Parenting Advice',
+      name: 'parenting_advice',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Smart Home Control`
   String get smart_home {
-    return Intl.message('Smart Home Control', name: 'smart_home', desc: '', args: []);
+    return Intl.message(
+      'Smart Home Control',
+      name: 'smart_home',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Monitoring Dashboard`
   String get monitoring_dashboard {
-    return Intl.message('Monitoring Dashboard', name: 'monitoring_dashboard', desc: '', args: []);
+    return Intl.message(
+      'Monitoring Dashboard',
+      name: 'monitoring_dashboard',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Refresh Status`
   String get refresh_status {
-    return Intl.message('Refresh Status', name: 'refresh_status', desc: '', args: []);
+    return Intl.message(
+      'Refresh Status',
+      name: 'refresh_status',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Initialize Agent`
   String get initialize_agent {
-    return Intl.message('Initialize Agent', name: 'initialize_agent', desc: '', args: []);
+    return Intl.message(
+      'Initialize Agent',
+      name: 'initialize_agent',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Send Message`
   String get send_message {
-    return Intl.message('Send Message', name: 'send_message', desc: '', args: []);
+    return Intl.message(
+      'Send Message',
+      name: 'send_message',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Enter message...`
   String get input_message {
-    return Intl.message('Enter message...', name: 'input_message', desc: '', args: []);
+    return Intl.message(
+      'Enter message...',
+      name: 'input_message',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Agent Status`
   String get agent_status {
-    return Intl.message('Agent Status', name: 'agent_status', desc: '', args: []);
+    return Intl.message(
+      'Agent Status',
+      name: 'agent_status',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Ready`
@@ -1342,37 +1397,72 @@ class S {
 
   /// `Not Initialized`
   String get agent_not_initialized {
-    return Intl.message('Not Initialized', name: 'agent_not_initialized', desc: '', args: []);
+    return Intl.message(
+      'Not Initialized',
+      name: 'agent_not_initialized',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Initializing...`
   String get agent_initializing {
-    return Intl.message('Initializing...', name: 'agent_initializing', desc: '', args: []);
+    return Intl.message(
+      'Initializing...',
+      name: 'agent_initializing',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Chat with AI Agent`
   String get chat_with_agent {
-    return Intl.message('Chat with AI Agent', name: 'chat_with_agent', desc: '', args: []);
+    return Intl.message(
+      'Chat with AI Agent',
+      name: 'chat_with_agent',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Ask parenting questions or request help`
   String get ask_parenting_question {
-    return Intl.message('Ask parenting questions or request help', name: 'ask_parenting_question', desc: '', args: []);
+    return Intl.message(
+      'Ask parenting questions or request help',
+      name: 'ask_parenting_question',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Situation Description`
   String get situation_description {
-    return Intl.message('Situation Description', name: 'situation_description', desc: '', args: []);
+    return Intl.message(
+      'Situation Description',
+      name: 'situation_description',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Baby Age (months, optional)`
   String get baby_age_months {
-    return Intl.message('Baby Age (months, optional)', name: 'baby_age_months', desc: '', args: []);
+    return Intl.message(
+      'Baby Age (months, optional)',
+      name: 'baby_age_months',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Not Specified`
   String get not_specified {
-    return Intl.message('Not Specified', name: 'not_specified', desc: '', args: []);
+    return Intl.message(
+      'Not Specified',
+      name: 'not_specified',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Get Advice`
@@ -1382,12 +1472,22 @@ class S {
 
   /// `Search Knowledge Base`
   String get search_knowledge {
-    return Intl.message('Search Knowledge Base', name: 'search_knowledge', desc: '', args: []);
+    return Intl.message(
+      'Search Knowledge Base',
+      name: 'search_knowledge',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Search Content`
   String get search_content {
-    return Intl.message('Search Content', name: 'search_content', desc: '', args: []);
+    return Intl.message(
+      'Search Content',
+      name: 'search_content',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Search`
@@ -1397,17 +1497,32 @@ class S {
 
   /// `Parenting Advice`
   String get advice_result {
-    return Intl.message('Parenting Advice', name: 'advice_result', desc: '', args: []);
+    return Intl.message(
+      'Parenting Advice',
+      name: 'advice_result',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Reference Knowledge`
   String get reference_knowledge {
-    return Intl.message('Reference Knowledge', name: 'reference_knowledge', desc: '', args: []);
+    return Intl.message(
+      'Reference Knowledge',
+      name: 'reference_knowledge',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Search Results`
   String get search_results {
-    return Intl.message('Search Results', name: 'search_results', desc: '', args: []);
+    return Intl.message(
+      'Search Results',
+      name: 'search_results',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `No advice yet`
@@ -1417,17 +1532,32 @@ class S {
 
   /// `Please enter situation description`
   String get please_enter_situation {
-    return Intl.message('Please enter situation description', name: 'please_enter_situation', desc: '', args: []);
+    return Intl.message(
+      'Please enter situation description',
+      name: 'please_enter_situation',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Please enter search content`
   String get please_enter_search {
-    return Intl.message('Please enter search content', name: 'please_enter_search', desc: '', args: []);
+    return Intl.message(
+      'Please enter search content',
+      name: 'please_enter_search',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Quick Actions`
   String get quick_actions {
-    return Intl.message('Quick Actions', name: 'quick_actions', desc: '', args: []);
+    return Intl.message(
+      'Quick Actions',
+      name: 'quick_actions',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Sleep Mode`
@@ -1437,7 +1567,12 @@ class S {
 
   /// `Comfort Mode`
   String get comfort_mode {
-    return Intl.message('Comfort Mode', name: 'comfort_mode', desc: '', args: []);
+    return Intl.message(
+      'Comfort Mode',
+      name: 'comfort_mode',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Alert Mode`
@@ -1452,12 +1587,22 @@ class S {
 
   /// `Smart Speaker`
   String get smart_speaker {
-    return Intl.message('Smart Speaker', name: 'smart_speaker', desc: '', args: []);
+    return Intl.message(
+      'Smart Speaker',
+      name: 'smart_speaker',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Play Content`
   String get play_content {
-    return Intl.message('Play Content', name: 'play_content', desc: '', args: []);
+    return Intl.message(
+      'Play Content',
+      name: 'play_content',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Play`
@@ -1502,12 +1647,22 @@ class S {
 
   /// `System Status`
   String get system_status {
-    return Intl.message('System Status', name: 'system_status', desc: '', args: []);
+    return Intl.message(
+      'System Status',
+      name: 'system_status',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `MQTT Connection`
   String get mqtt_connection {
-    return Intl.message('MQTT Connection', name: 'mqtt_connection', desc: '', args: []);
+    return Intl.message(
+      'MQTT Connection',
+      name: 'mqtt_connection',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Connected`
@@ -1517,12 +1672,22 @@ class S {
 
   /// `Disconnected`
   String get disconnected {
-    return Intl.message('Disconnected', name: 'disconnected', desc: '', args: []);
+    return Intl.message(
+      'Disconnected',
+      name: 'disconnected',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Speaker Tool`
   String get speaker_tool {
-    return Intl.message('Speaker Tool', name: 'speaker_tool', desc: '', args: []);
+    return Intl.message(
+      'Speaker Tool',
+      name: 'speaker_tool',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Light Tool`
@@ -1547,32 +1712,62 @@ class S {
 
   /// `Active Connections`
   String get active_connections {
-    return Intl.message('Active Connections', name: 'active_connections', desc: '', args: []);
+    return Intl.message(
+      'Active Connections',
+      name: 'active_connections',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Messages Sent`
   String get messages_sent {
-    return Intl.message('Messages Sent', name: 'messages_sent', desc: '', args: []);
+    return Intl.message(
+      'Messages Sent',
+      name: 'messages_sent',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Messages Received`
   String get messages_received {
-    return Intl.message('Messages Received', name: 'messages_received', desc: '', args: []);
+    return Intl.message(
+      'Messages Received',
+      name: 'messages_received',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Audio Devices`
   String get audio_devices {
-    return Intl.message('Audio Devices', name: 'audio_devices', desc: '', args: []);
+    return Intl.message(
+      'Audio Devices',
+      name: 'audio_devices',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Message Traffic`
   String get message_traffic {
-    return Intl.message('Message Traffic', name: 'message_traffic', desc: '', args: []);
+    return Intl.message(
+      'Message Traffic',
+      name: 'message_traffic',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Connection Count`
   String get connection_count {
-    return Intl.message('Connection Count', name: 'connection_count', desc: '', args: []);
+    return Intl.message(
+      'Connection Count',
+      name: 'connection_count',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Latency`
@@ -1587,47 +1782,92 @@ class S {
 
   /// `No Active Connections`
   String get no_active_connections {
-    return Intl.message('No Active Connections', name: 'no_active_connections', desc: '', args: []);
+    return Intl.message(
+      'No Active Connections',
+      name: 'no_active_connections',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Audio Statistics`
   String get audio_statistics {
-    return Intl.message('Audio Statistics', name: 'audio_statistics', desc: '', args: []);
+    return Intl.message(
+      'Audio Statistics',
+      name: 'audio_statistics',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Active Devices`
   String get active_device_count {
-    return Intl.message('Active Devices', name: 'active_device_count', desc: '', args: []);
+    return Intl.message(
+      'Active Devices',
+      name: 'active_device_count',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Streaming Devices`
   String get streaming_device_count {
-    return Intl.message('Streaming Devices', name: 'streaming_device_count', desc: '', args: []);
+    return Intl.message(
+      'Streaming Devices',
+      name: 'streaming_device_count',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Buffer Status`
   String get buffer_status {
-    return Intl.message('Buffer Status', name: 'buffer_status', desc: '', args: []);
+    return Intl.message(
+      'Buffer Status',
+      name: 'buffer_status',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Refresh Data`
   String get refresh_data {
-    return Intl.message('Refresh Data', name: 'refresh_data', desc: '', args: []);
+    return Intl.message(
+      'Refresh Data',
+      name: 'refresh_data',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Video Stream`
   String get video_stream {
-    return Intl.message('Video Stream', name: 'video_stream', desc: '', args: []);
+    return Intl.message(
+      'Video Stream',
+      name: 'video_stream',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Audio Stream`
   String get audio_stream {
-    return Intl.message('Audio Stream', name: 'audio_stream', desc: '', args: []);
+    return Intl.message(
+      'Audio Stream',
+      name: 'audio_stream',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Two-way Intercom`
   String get intercom {
-    return Intl.message('Two-way Intercom', name: 'intercom', desc: '', args: []);
+    return Intl.message(
+      'Two-way Intercom',
+      name: 'intercom',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Reconnect`
@@ -1657,7 +1897,12 @@ class S {
 
   /// `Start Intercom`
   String get start_intercom {
-    return Intl.message('Start Intercom', name: 'start_intercom', desc: '', args: []);
+    return Intl.message(
+      'Start Intercom',
+      name: 'start_intercom',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Mute`
@@ -1672,32 +1917,62 @@ class S {
 
   /// `Connection Statistics`
   String get connection_statistics {
-    return Intl.message('Connection Statistics', name: 'connection_statistics', desc: '', args: []);
+    return Intl.message(
+      'Connection Statistics',
+      name: 'connection_statistics',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Video Connection`
   String get video_connection {
-    return Intl.message('Video Connection', name: 'video_connection', desc: '', args: []);
+    return Intl.message(
+      'Video Connection',
+      name: 'video_connection',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Audio Connection`
   String get audio_connection {
-    return Intl.message('Audio Connection', name: 'audio_connection', desc: '', args: []);
+    return Intl.message(
+      'Audio Connection',
+      name: 'audio_connection',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Intercom Connection`
   String get intercom_connection {
-    return Intl.message('Intercom Connection', name: 'intercom_connection', desc: '', args: []);
+    return Intl.message(
+      'Intercom Connection',
+      name: 'intercom_connection',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Frames Received`
   String get frames_received {
-    return Intl.message('Frames Received', name: 'frames_received', desc: '', args: []);
+    return Intl.message(
+      'Frames Received',
+      name: 'frames_received',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Audio Chunks Received`
   String get audio_chunks_received {
-    return Intl.message('Audio Chunks Received', name: 'audio_chunks_received', desc: '', args: []);
+    return Intl.message(
+      'Audio Chunks Received',
+      name: 'audio_chunks_received',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Normal`
@@ -1712,27 +1987,52 @@ class S {
 
   /// `Detection Time Test`
   String get detection_time_test {
-    return Intl.message('Detection Time Test', name: 'detection_time_test', desc: '', args: []);
+    return Intl.message(
+      'Detection Time Test',
+      name: 'detection_time_test',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Notifications Enabled`
   String get notifications_enabled {
-    return Intl.message('Notifications Enabled', name: 'notifications_enabled', desc: '', args: []);
+    return Intl.message(
+      'Notifications Enabled',
+      name: 'notifications_enabled',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `You will receive app notifications!`
   String get notifications_enabled_body {
-    return Intl.message('You will receive app notifications!', name: 'notifications_enabled_body', desc: '', args: []);
+    return Intl.message(
+      'You will receive app notifications!',
+      name: 'notifications_enabled_body',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Select Device`
   String get select_device {
-    return Intl.message('Select Device', name: 'select_device', desc: '', args: []);
+    return Intl.message(
+      'Select Device',
+      name: 'select_device',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Enable Video Detection`
   String get enable_video_detection {
-    return Intl.message('Enable Video Detection', name: 'enable_video_detection', desc: '', args: []);
+    return Intl.message(
+      'Enable Video Detection',
+      name: 'enable_video_detection',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Prompt`
@@ -1747,22 +2047,42 @@ class S {
 
   /// `Operation Successful`
   String get operation_success {
-    return Intl.message('Operation Successful', name: 'operation_success', desc: '', args: []);
+    return Intl.message(
+      'Operation Successful',
+      name: 'operation_success',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Operation Failed`
   String get operation_failed {
-    return Intl.message('Operation Failed', name: 'operation_failed', desc: '', args: []);
+    return Intl.message(
+      'Operation Failed',
+      name: 'operation_failed',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Unknown Operation`
   String get unknown_operation {
-    return Intl.message('Unknown Operation', name: 'unknown_operation', desc: '', args: []);
+    return Intl.message(
+      'Unknown Operation',
+      name: 'unknown_operation',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Camera address not found, please check device connection.`
   String get no_camera_address {
-    return Intl.message('Camera address not found, please check device connection.', name: 'no_camera_address', desc: '', args: []);
+    return Intl.message(
+      'Camera address not found, please check device connection.',
+      name: 'no_camera_address',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `White Noise`
@@ -1827,12 +2147,22 @@ class S {
 
   /// `Reading Mode`
   String get reading_mode {
-    return Intl.message('Reading Mode', name: 'reading_mode', desc: '', args: []);
+    return Intl.message(
+      'Reading Mode',
+      name: 'reading_mode',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Sleep Mode`
   String get sleep_mode_light {
-    return Intl.message('Sleep Mode', name: 'sleep_mode_light', desc: '', args: []);
+    return Intl.message(
+      'Sleep Mode',
+      name: 'sleep_mode_light',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `General`

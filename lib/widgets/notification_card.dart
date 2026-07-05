@@ -1,7 +1,9 @@
-//只提供关于通知卡片的UI
-
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../models/notification_model.dart';
+import '../theme/serene_colors.dart';
+import '../theme/serene_spacing.dart';
+import '../theme/serene_typography.dart';
 
 class NotificationCard extends StatelessWidget {
   final NotificationModel record;
@@ -18,43 +20,74 @@ class NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(record.id.toString()), // 使用 ID 作为 key
+      key: Key(record.id.toString()),
       background: Container(
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        // 判断是否固定，如果是固定，颜色加深
-        color: record.pinned ? Colors.blue.shade800 : Colors.blue,
+        decoration: BoxDecoration(
+          color: record.pinned ? SereneColors.primary : SereneColors.primaryContainer,
+          borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+        ),
         child: Icon(
           record.pinned ? Icons.remove_circle : Icons.push_pin,
-          color: Colors.white,
+          color: record.pinned ? SereneColors.onPrimary : SereneColors.onPrimaryContainer,
         ),
       ),
       secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        color: Colors.red,
-        child: const Icon(Icons.delete, color: Colors.white),
+        decoration: BoxDecoration(
+          color: SereneColors.errorContainer,
+          borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+        ),
+        child: const Icon(
+          Icons.delete,
+          color: SereneColors.error,
+        ),
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.endToStart) {
-          // 显示删除确认对话框
           return await showDialog<bool>(
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: const Text('Confirm Deletion'),
-                content: const Text('Are you sure you want to delete this notification?'),
+                backgroundColor: SereneColors.surfaceContainerLowest,
+                shape: RoundedRectangleBorder(
+                  borderRadius: SereneSpacing.dialogRadius,
+                ),
+                title: Text(
+                  'Confirm Deletion',
+                  style: SereneTypography.headlineSmall.copyWith(
+                    color: SereneColors.onSurface,
+                  ),
+                ),
+                content: Text(
+                  'Are you sure you want to delete this notification?',
+                  style: SereneTypography.bodyMedium.copyWith(
+                    color: SereneColors.onSurfaceVariant,
+                  ),
+                ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('Cancel'),
+                    child: Text(
+                      'Cancel',
+                      style: SereneTypography.labelLarge.copyWith(
+                        color: SereneColors.onSurfaceVariant,
+                      ),
+                    ),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop(true);
-                      onDelete(); // 执行删除操作
+                      onDelete();
                     },
-                    child: const Text('Delete'),
+                    child: Text(
+                      'Delete',
+                      style: SereneTypography.labelLarge.copyWith(
+                        color: SereneColors.error,
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -65,30 +98,105 @@ class NotificationCard extends StatelessWidget {
       },
       onDismissed: (direction) {
         if (direction == DismissDirection.startToEnd) {
-          // 触发置顶
-          onTogglePin(); // 执行置顶操作
+          onTogglePin();
         } else if (direction == DismissDirection.endToStart) {
-          // 触发删除
-          onDelete(); // 执行删除操作
+          onDelete();
         }
       },
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 10),
-        elevation: 4, // 提升效果
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: SereneSpacing.sm),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+          color: record.pinned
+              ? SereneColors.primaryContainer.withValues(alpha: 0.3)
+              : SereneColors.surfaceContainerLowest.withValues(alpha: 0.7),
+          border: Border.all(
+            color: record.pinned
+                ? SereneColors.primaryContainer
+                : SereneColors.outlineVariant.withValues(alpha: 0.2),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        color: record.pinned ? Colors.blue.shade100 : Colors.white, // 深色背景
-        child: ListTile(
-          title: Text(record.message),
-          subtitle: Text('Level: ${record.level}'),
-          trailing: Text(_formatTimestamp(record.timestamp)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: SereneSpacing.cardPadding,
+                vertical: SereneSpacing.sm,
+              ),
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _getLevelColor(record.level).withValues(alpha: 0.2),
+                ),
+                child: Icon(
+                  _getLevelIcon(record.level),
+                  color: _getLevelColor(record.level),
+                  size: 20,
+                ),
+              ),
+              title: Text(
+                record.message,
+                style: SereneTypography.bodyMedium.copyWith(
+                  color: SereneColors.onSurface,
+                ),
+              ),
+              subtitle: Text(
+                'Level: ${record.level}',
+                style: SereneTypography.bodySmall.copyWith(
+                  color: SereneColors.onSurfaceVariant,
+                ),
+              ),
+              trailing: Text(
+                _formatTimestamp(record.timestamp),
+                style: SereneTypography.labelMedium.copyWith(
+                  color: SereneColors.outline,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  // 格式化 DateTime 为字符串显示
+  Color _getLevelColor(String level) {
+    switch (level.toLowerCase()) {
+      case 'high':
+        return SereneColors.error;
+      case 'medium':
+        return SereneColors.warning;
+      case 'low':
+        return SereneColors.safe;
+      default:
+        return SereneColors.primary;
+    }
+  }
+
+  IconData _getLevelIcon(String level) {
+    switch (level.toLowerCase()) {
+      case 'high':
+        return Icons.error_outline;
+      case 'medium':
+        return Icons.warning_outlined;
+      case 'low':
+        return Icons.info_outline;
+      default:
+        return Icons.notifications_outlined;
+    }
+  }
+
   String _formatTimestamp(DateTime timestamp) {
     return '${timestamp.day}-${timestamp.month}-${timestamp.year} ${timestamp.hour}:${timestamp.minute}';
   }

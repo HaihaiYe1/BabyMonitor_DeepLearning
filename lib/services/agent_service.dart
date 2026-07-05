@@ -147,6 +147,102 @@ class AgentService {
     }
   }
 
+  // 获取所有Agent状态
+  Future<Map<String, dynamic>> getAllAgents() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse(ApiService.agentAllAgents),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {'success': false, 'error': '获取所有Agent状态失败: ${response.statusCode}'};
+      }
+    } catch (e) {
+      return {'success': false, 'error': '获取所有Agent状态异常: $e'};
+    }
+  }
+
+  // 移除当前用户的Agent
+  Future<Map<String, dynamic>> removeAgent() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.delete(
+        Uri.parse(ApiService.agentRemove),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {'success': false, 'error': '移除Agent失败: ${response.statusCode}'};
+      }
+    } catch (e) {
+      return {'success': false, 'error': '移除Agent异常: $e'};
+    }
+  }
+
+  // 获取视频Agent状态
+  Future<Map<String, dynamic>> getVideoAgentStatus() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse(ApiService.videoAgentStatus),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {'success': false, 'error': '获取视频Agent状态失败: ${response.statusCode}'};
+      }
+    } catch (e) {
+      return {'success': false, 'error': '获取视频Agent状态异常: $e'};
+    }
+  }
+
+  // 更新视频Agent偏好设置
+  Future<Map<String, dynamic>> updateVideoAgentPreferences(Map<String, dynamic> preferences) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.put(
+        Uri.parse(ApiService.videoAgentPreferences),
+        headers: headers,
+        body: json.encode(preferences),
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {'success': false, 'error': '更新视频Agent偏好失败: ${response.statusCode}'};
+      }
+    } catch (e) {
+      return {'success': false, 'error': '更新视频Agent偏好异常: $e'};
+    }
+  }
+
+  // 单次视频检测
+  Future<Map<String, dynamic>> singleVideoDetect({int? deviceId, String? videoPath, int maxFrames = 10}) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse(ApiService.videoDetect(deviceId: deviceId, videoPath: videoPath, maxFrames: maxFrames)),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {'success': false, 'error': '单次视频检测失败: ${response.statusCode}'};
+      }
+    } catch (e) {
+      return {'success': false, 'error': '单次视频检测异常: $e'};
+    }
+  }
+
   // 启动Agent检测
   Future<Map<String, dynamic>> startAgentDetect(int deviceId, {int maxFrames = 5}) async {
     try {

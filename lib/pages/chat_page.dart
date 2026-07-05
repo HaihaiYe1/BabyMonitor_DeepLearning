@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/agent_service.dart';
 import '../generated/l10n.dart';
+import '../theme/serene_colors.dart';
+import '../theme/serene_spacing.dart';
+import '../theme/serene_typography.dart';
+import '../widgets/glass_widgets.dart';
+import '../widgets/serene_widgets.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -157,164 +162,157 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).agent_chat ?? 'AI Agent对话'),
-        backgroundColor: Colors.white.withOpacity(0.8),
-        elevation: 0,
+      extendBody: true,
+      backgroundColor: SereneColors.surface,
+      appBar: GlassAppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            child: const Icon(
+              Icons.arrow_back,
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
+        ),
+        title: Text(
+          'AI Assistant',
+          style: SereneTypography.headlineSmall.copyWith(
+            color: SereneColors.primary,
+          ),
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _checkAgentStatus,
-            tooltip: '刷新状态',
-          ),
-          if (!_isAgentReady)
-            IconButton(
-              icon: const Icon(Icons.play_arrow),
-              onPressed: _initializeAgent,
-              tooltip: '初始化Agent',
+          Padding(
+            padding: const EdgeInsets.only(right: SereneSpacing.sm),
+            child: SereneIconButton(
+              icon: Icons.delete_sweep_outlined,
+              iconColor: SereneColors.onSurfaceVariant,
+              size: 40,
+              tooltip: 'Clear chat',
+              onPressed: () {
+                setState(() {
+                  _messages.clear();
+                });
+              },
             ),
+          ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFE3FDFD), Color(0xFFFFE6FA)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Column(
+      body: SafeArea(
+        bottom: false,
+        child: Stack(
           children: [
-            // Agent状态栏
-            _buildStatusBar(),
-            // 消息列表
-            Expanded(child: _buildMessageList()),
-            // 输入框
-            _buildInputArea(),
+            // 背景色
+            Container(
+              color: SereneColors.surface,
+            ),
+            // 聊天内容
+            Column(
+              children: [
+                // 消息列表
+                Expanded(
+                  child: _messages.isEmpty
+                      ? _buildWelcomeMessage()
+                      : _buildChatMessages(),
+                ),
+                // 加载指示器
+                if (_isLoading) _buildTypingIndicator(),
+                // 输入区域
+                _buildInputArea(),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatusBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.withOpacity(0.3)),
-        ),
-      ),
-      child: Row(
+  /// 构建欢迎消息
+  Widget _buildWelcomeMessage() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            _isAgentReady ? Icons.check_circle : Icons.warning,
-            color: _isAgentReady ? Colors.green : Colors.orange,
-            size: 16,
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: SereneColors.primaryContainer,
+              boxShadow: [
+                BoxShadow(
+                  color: SereneColors.primary.withValues(alpha: 0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.smart_toy_outlined,
+              size: 32,
+              color: SereneColors.onPrimaryContainer,
+            ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(height: SereneSpacing.md),
           Text(
-            'Agent状态: $_agentStatus',
-            style: TextStyle(
-              color: _isAgentReady ? Colors.green[700] : Colors.orange[700],
-              fontWeight: FontWeight.bold,
+            'BabyApp Assistant',
+            style: SereneTypography.labelLarge.copyWith(
+              color: SereneColors.onSurfaceVariant,
             ),
           ),
-          const Spacer(),
-          if (_isLoading)
-            const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
+          const SizedBox(height: SereneSpacing.xs),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: SereneSpacing.xl),
+            child: Text(
+              'I can help you analyze sleep patterns, suggest feeding schedules, or answer general questions.',
+              style: SereneTypography.bodySmall.copyWith(
+                color: SereneColors.outline,
+              ),
+              textAlign: TextAlign.center,
             ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildMessageList() {
-    if (_messages.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.chat_bubble_outline,
-              size: 64,
-              color: Colors.grey[400],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '开始与AI Agent对话',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '可以询问育儿问题或请求帮助',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[500],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
+  /// 构建聊天消息列表
+  Widget _buildChatMessages() {
     return ListView.builder(
       controller: _scrollController,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: SereneSpacing.marginMobile,
+        vertical: SereneSpacing.md,
+      ),
       itemCount: _messages.length,
       itemBuilder: (context, index) {
-        return _buildMessageBubble(_messages[index]);
+        final message = _messages[index];
+        return _buildMessageBubble(message);
       },
     );
   }
 
+  /// 构建消息气泡
   Widget _buildMessageBubble(ChatMessage message) {
     return Align(
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        margin: const EdgeInsets.only(bottom: SereneSpacing.md),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        decoration: BoxDecoration(
-          color: message.isUser
-              ? Colors.blue[100]
-              : message.isError
-                  ? Colors.red[100]
-                  : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          maxWidth: MediaQuery.of(context).size.width * 0.85,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+              message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Text(
-              message.text,
-              style: TextStyle(
-                color: message.isError ? Colors.red[700] : Colors.black87,
-                fontSize: 14,
-              ),
-            ),
+            message.isUser
+                ? _buildUserMessage(message)
+                : _buildBotMessage(message),
             const SizedBox(height: 4),
             Text(
               '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[500],
+              style: SereneTypography.labelMedium.copyWith(
+                color: SereneColors.outline,
               ),
             ),
           ],
@@ -323,45 +321,213 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  /// 构建用户消息
+  Widget _buildUserMessage(ChatMessage message) {
+    return Container(
+      padding: const EdgeInsets.all(SereneSpacing.md),
+      decoration: BoxDecoration(
+        color: SereneColors.primary,
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(SereneSpacing.radiusXl),
+          topRight: const Radius.circular(SereneSpacing.radiusXl),
+          bottomLeft: const Radius.circular(SereneSpacing.radiusXl),
+          bottomRight: const Radius.circular(SereneSpacing.radiusSm),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: SereneColors.primary.withValues(alpha: 0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Text(
+        message.text,
+        style: SereneTypography.bodyMedium.copyWith(
+          color: SereneColors.onPrimary,
+        ),
+      ),
+    );
+  }
+
+  /// 构建AI消息
+  Widget _buildBotMessage(ChatMessage message) {
+    return GlassPanel(
+      padding: const EdgeInsets.all(SereneSpacing.md),
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(SereneSpacing.radiusXl),
+        topRight: Radius.circular(SereneSpacing.radiusXl),
+        bottomLeft: Radius.circular(SereneSpacing.radiusSm),
+        bottomRight: Radius.circular(SereneSpacing.radiusXl),
+      ),
+      child: Text(
+        message.text,
+        style: SereneTypography.bodyMedium.copyWith(
+          color: message.isError ? SereneColors.error : SereneColors.onSurface,
+        ),
+      ),
+    );
+  }
+
+  /// 构建打字指示器
+  Widget _buildTypingIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: SereneSpacing.marginMobile,
+        vertical: SereneSpacing.sm,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: SereneColors.surfaceVariant,
+            ),
+            child: const Icon(
+              Icons.smart_toy_outlined,
+              size: 18,
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: SereneSpacing.sm),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: SereneSpacing.md,
+              vertical: SereneSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              color: SereneColors.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTypingDot(0),
+                const SizedBox(width: 4),
+                _buildTypingDot(1),
+                const SizedBox(width: 4),
+                _buildTypingDot(2),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建打字指示器的圆点
+  Widget _buildTypingDot(int index) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: SereneColors.outline.withValues(alpha: 0.5),
+      ),
+    );
+  }
+
+  /// 构建输入区域
   Widget _buildInputArea() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(
+        SereneSpacing.sm,
+        SereneSpacing.sm,
+        SereneSpacing.sm,
+        SereneSpacing.marginMobile,
+      ),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
+        color: SereneColors.surface.withValues(alpha: 0.9),
         border: Border(
-          top: BorderSide(color: Colors.grey.withOpacity(0.3)),
+          top: BorderSide(
+            color: SereneColors.outlineVariant.withValues(alpha: 0.3),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
         children: [
+          // 添加按钮
+          SereneIconButton(
+            icon: Icons.add_circle_outline,
+            iconColor: SereneColors.primary,
+            size: 40,
+            tooltip: 'Add attachment',
+            onPressed: () {
+              // TODO: 添加附件
+            },
+          ),
+          const SizedBox(width: SereneSpacing.sm),
+          // 输入框
           Expanded(
-            child: TextField(
-              controller: _messageController,
-              decoration: InputDecoration(
-                hintText: '输入消息...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
+            child: Container(
+              decoration: BoxDecoration(
+                color: SereneColors.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+                border: Border.all(
+                  color: SereneColors.outlineVariant.withValues(alpha: 0.3),
+                  width: 1,
                 ),
-                filled: true,
-                fillColor: Colors.grey[100],
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
-              maxLines: null,
-              textInputAction: TextInputAction.send,
-              onSubmitted: (_) => _sendMessage(),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      onSubmitted: (_) => _sendMessage(),
+                      style: SereneTypography.bodyMedium.copyWith(
+                        color: SereneColors.onSurface,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Ask me anything...',
+                        hintStyle: SereneTypography.bodyMedium.copyWith(
+                          color: SereneColors.outline,
+                        ),
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: SereneSpacing.md,
+                          vertical: SereneSpacing.md,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: SereneSpacing.sm),
+                    child: GestureDetector(
+                      onTap: _isLoading ? null : _sendMessage,
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: SereneColors.primary,
+                        ),
+                        child: const Icon(
+                          Icons.arrow_upward,
+                          size: 18,
+                          color: SereneColors.onPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(width: 12),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.send, color: Colors.white),
-              onPressed: _isLoading ? null : _sendMessage,
-            ),
+          const SizedBox(width: SereneSpacing.sm),
+          // 麦克风按钮
+          SereneIconButton(
+            icon: Icons.mic_outlined,
+            iconColor: SereneColors.onSurfaceVariant,
+            size: 40,
+            tooltip: 'Voice input',
+            onPressed: () {
+              // TODO: 语音输入
+            },
           ),
         ],
       ),

@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../services/api_service.dart';
 import '../generated/l10n.dart';
+import '../theme/serene_colors.dart';
+import '../theme/serene_spacing.dart';
+import '../theme/serene_typography.dart';
+import '../widgets/glass_widgets.dart';
+import '../widgets/serene_widgets.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -65,7 +70,7 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
       
       _updateChartData();
     } catch (e) {
-      print('加载监控数据失败: $e');
+      print('Failed to load monitoring data: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -86,7 +91,7 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
         });
       }
     } catch (e) {
-      print('加载统计数据失败: $e');
+      print('Failed to load stats: $e');
     }
   }
 
@@ -104,7 +109,7 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
         });
       }
     } catch (e) {
-      print('加载连接数据失败: $e');
+      print('Failed to load connections: $e');
     }
   }
 
@@ -121,7 +126,7 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
         });
       }
     } catch (e) {
-      print('加载音频数据失败: $e');
+      print('Failed to load audio stats: $e');
     }
   }
 
@@ -163,62 +168,202 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).monitoring_dashboard ?? '监控仪表盘'),
-        backgroundColor: Colors.white.withOpacity(0.8),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: _isLoading 
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.refresh),
-            onPressed: _isLoading ? null : _loadData,
-            tooltip: '刷新数据',
+      extendBody: true,
+      backgroundColor: SereneColors.surface,
+      appBar: GlassAppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            child: const Icon(
+              Icons.menu,
+              color: SereneColors.onSurfaceVariant,
+            ),
           ),
-          PopupMenuButton<int>(
-            icon: const Icon(Icons.timer),
-            onSelected: (value) {
-              setState(() {
-                _timeRange = value;
-              });
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 300, child: Text('5分钟')),
-              const PopupMenuItem(value: 900, child: Text('15分钟')),
-              const PopupMenuItem(value: 1800, child: Text('30分钟')),
-              const PopupMenuItem(value: 3600, child: Text('1小时')),
-            ],
+        ),
+        title: Text(
+          'Live Monitor',
+          style: SereneTypography.headlineSmall.copyWith(
+            color: SereneColors.primary,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: SereneSpacing.sm),
+            child: _isLoading
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: SereneColors.primary,
+                    ),
+                  )
+                : SereneIconButton(
+                    icon: Icons.settings_outlined,
+                    iconColor: SereneColors.onSurfaceVariant,
+                    size: 40,
+                    tooltip: 'Settings',
+                    onPressed: () {
+                      // TODO: 打开设置
+                    },
+                  ),
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFE3FDFD), Color(0xFFFFE6FA)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+      body: SafeArea(
+        bottom: false,
+        child: Stack(
+          children: [
+            // 背景色
+            Container(
+              color: SereneColors.surface,
+            ),
+            // 主内容
+            SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                SereneSpacing.marginMobile,
+                SereneSpacing.lg,
+                SereneSpacing.marginMobile,
+                SereneSpacing.xl,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 视频播放器
+                  _buildVideoPlayer(),
+                  const SizedBox(height: SereneSpacing.lg),
+                  // 对讲区域
+                  _buildIntercomSection(),
+                  const SizedBox(height: SereneSpacing.lg),
+                  // 流统计
+                  _buildStreamStats(),
+                  const SizedBox(height: SereneSpacing.lg),
+                  // 统计卡片
+                  _buildStatsCards(),
+                  const SizedBox(height: SereneSpacing.lg),
+                  // 图表区域
+                  _buildChartsSection(),
+                  const SizedBox(height: SereneSpacing.lg),
+                  // 连接列表
+                  _buildConnectionsList(),
+                ],
+              ),
+            ),
+          ],
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+    );
+  }
+
+  /// 构建视频播放器
+  Widget _buildVideoPlayer() {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+          color: SereneColors.surfaceContainerHigh,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+          child: Stack(
             children: [
-              _buildStatsCards(),
-              const SizedBox(height: 24),
-              _buildMessageChart(),
-              const SizedBox(height: 24),
-              _buildConnectionChart(),
-              const SizedBox(height: 24),
-              _buildLatencyChart(),
-              const SizedBox(height: 24),
-              _buildConnectionsList(),
-              const SizedBox(height: 24),
-              _buildAudioStats(),
+              // 视频占位符
+              Center(
+                child: Icon(
+                  Icons.videocam_outlined,
+                  size: 64,
+                  color: SereneColors.onSurfaceVariant,
+                ),
+              ),
+              // 渐变遮罩
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.3),
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.6),
+                    ],
+                  ),
+                ),
+              ),
+              // 顶部徽章
+              Positioned(
+                top: SereneSpacing.md,
+                left: SereneSpacing.md,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: SereneColors.error,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'LIVE',
+                        style: SereneTypography.labelMedium.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // 底部控制
+              Positioned(
+                bottom: SereneSpacing.md,
+                left: SereneSpacing.md,
+                right: SereneSpacing.md,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        _buildVideoControlButton(Icons.pause),
+                        const SizedBox(width: 8),
+                        _buildVolumeControl(),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        _buildVideoControlButton(Icons.photo_camera_outlined),
+                        const SizedBox(width: 8),
+                        _buildVideoControlButton(Icons.fullscreen),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -226,6 +371,212 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
     );
   }
 
+  /// 构建视频控制按钮
+  Widget _buildVideoControlButton(IconData icon) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white.withValues(alpha: 0.2),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Icon(
+        icon,
+        color: Colors.white,
+        size: 20,
+      ),
+    );
+  }
+
+  /// 构建音量控制
+  Widget _buildVolumeControl() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.volume_up,
+            color: Colors.white,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 80,
+            child: SliderTheme(
+              data: SliderThemeData(
+                activeTrackColor: Colors.white,
+                inactiveTrackColor: Colors.white.withValues(alpha: 0.3),
+                thumbColor: Colors.white,
+                thumbShape: const RoundSliderThumbShape(
+                  enabledThumbRadius: 6,
+                ),
+                overlayShape: const RoundSliderOverlayShape(
+                  overlayRadius: 12,
+                ),
+              ),
+              child: Slider(
+                value: 0.7,
+                onChanged: (value) {
+                  // TODO: 控制音量
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建对讲区域
+  Widget _buildIntercomSection() {
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.xl),
+      child: Column(
+        children: [
+          Text(
+            'Intercom',
+            style: SereneTypography.headlineSmall.copyWith(
+              color: SereneColors.onSurface,
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.sm),
+          Text(
+            'Hold to speak to the nursery',
+            style: SereneTypography.bodyMedium.copyWith(
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.lg),
+          // 麦克风按钮
+          GestureDetector(
+            onTapDown: (_) {
+              // TODO: 开始录音
+            },
+            onTapUp: (_) {
+              // TODO: 停止录音
+            },
+            child: Container(
+              width: 96,
+              height: 96,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: SereneColors.primaryContainer,
+                boxShadow: [
+                  BoxShadow(
+                    color: SereneColors.primary.withValues(alpha: 0.2),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.mic,
+                size: 48,
+                color: SereneColors.onPrimaryContainer,
+              ),
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          Text(
+            'Push to Talk',
+            style: SereneTypography.labelLarge.copyWith(
+              color: SereneColors.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建流统计
+  Widget _buildStreamStats() {
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: ExpansionTile(
+        title: Row(
+          children: [
+            Icon(
+              Icons.info_outline,
+              color: SereneColors.onSurfaceVariant,
+              size: 20,
+            ),
+            const SizedBox(width: SereneSpacing.sm),
+            Text(
+              'Stream Statistics',
+              style: SereneTypography.labelLarge.copyWith(
+                color: SereneColors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: SereneSpacing.md),
+            child: GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: SereneSpacing.sm,
+              mainAxisSpacing: SereneSpacing.sm,
+              childAspectRatio: 2.5,
+              children: [
+                _buildStatItem('FPS', '30'),
+                _buildStatItem('Latency', '120ms'),
+                _buildStatItem('Bitrate', '2.4 Mbps'),
+                _buildStatItem('Signal', 'Excellent'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建统计项
+  Widget _buildStatItem(String label, String value) {
+    return Container(
+      padding: const EdgeInsets.all(SereneSpacing.sm),
+      decoration: BoxDecoration(
+        color: SereneColors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(SereneSpacing.radiusDefault),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: SereneTypography.bodySmall.copyWith(
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
+          Text(
+            value,
+            style: SereneTypography.bodySmall.copyWith(
+              color: SereneColors.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建统计卡片
   Widget _buildStatsCards() {
     final ws = _stats?['websocket'] ?? {};
     final audio = _stats?['audio'] ?? {};
@@ -234,37 +585,37 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
       children: [
         Expanded(
           child: _buildStatCard(
-            '活跃连接',
+            'Active Connections',
             '${ws['active_connections'] ?? 0}',
             Icons.devices,
-            Colors.blue,
+            SereneColors.primary,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: SereneSpacing.sm),
         Expanded(
           child: _buildStatCard(
-            '消息发送',
+            'Messages Sent',
             '${ws['messages_sent'] ?? 0}',
             Icons.send,
-            Colors.green,
+            SereneColors.safe,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: SereneSpacing.sm),
         Expanded(
           child: _buildStatCard(
-            '消息接收',
+            'Messages Received',
             '${ws['messages_received'] ?? 0}',
             Icons.call_received,
-            Colors.orange,
+            SereneColors.warning,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: SereneSpacing.sm),
         Expanded(
           child: _buildStatCard(
-            '音频设备',
+            'Audio Devices',
             '${audio['active_devices'] ?? 0}',
             Icons.mic,
-            Colors.purple,
+            SereneColors.tertiary,
           ),
         ),
       ],
@@ -272,257 +623,265 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
   }
 
   Widget _buildStatCard(String title, String value, IconData icon, Color color) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 32),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.md),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: SereneSpacing.sm),
+          Text(
+            value,
+            style: SereneTypography.headlineSmall.copyWith(
+              color: color,
             ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: SereneTypography.labelMedium.copyWith(
+              color: SereneColors.onSurfaceVariant,
             ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
 
+  /// 构建图表区域
+  Widget _buildChartsSection() {
+    return Column(
+      children: [
+        _buildMessageChart(),
+        const SizedBox(height: SereneSpacing.lg),
+        _buildConnectionChart(),
+        const SizedBox(height: SereneSpacing.lg),
+        _buildLatencyChart(),
+      ],
+    );
+  }
+
   Widget _buildMessageChart() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.message, color: Colors.blue[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '消息流量',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.message, color: SereneColors.primary, size: 20),
+              const SizedBox(width: SereneSpacing.sm),
+              Text(
+                'Message Traffic',
+                style: SereneTypography.headlineSmall.copyWith(
+                  color: SereneColors.onSurface,
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: _messageData.isEmpty
-                ? const Center(child: Text('暂无数据'))
-                : LineChart(
-                    LineChartData(
-                      gridData: FlGridData(show: true),
-                      titlesData: FlTitlesData(show: false),
-                      borderData: FlBorderData(show: false),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: _messageData,
-                          isCurved: true,
-                          color: Colors.blue,
-                          barWidth: 2,
-                          dotData: FlDotData(show: false),
-                          belowBarData: BarAreaData(
-                            show: true,
-                            color: Colors.blue.withOpacity(0.1),
-                          ),
-                        ),
-                      ],
+              ),
+            ],
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          SizedBox(
+            height: 200,
+            child: _messageData.isEmpty
+              ? Center(
+                  child: Text(
+                    'No data',
+                    style: SereneTypography.bodyMedium.copyWith(
+                      color: SereneColors.onSurfaceVariant,
                     ),
                   ),
-            ),
-          ],
-        ),
+                )
+              : LineChart(
+                  LineChartData(
+                    gridData: FlGridData(show: true),
+                    titlesData: FlTitlesData(show: false),
+                    borderData: FlBorderData(show: false),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: _messageData,
+                        isCurved: true,
+                        color: SereneColors.primary,
+                        barWidth: 2,
+                        dotData: FlDotData(show: false),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: SereneColors.primary.withValues(alpha: 0.1),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildConnectionChart() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.device_hub, color: Colors.green[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '连接数',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.device_hub, color: SereneColors.safe, size: 20),
+              const SizedBox(width: SereneSpacing.sm),
+              Text(
+                'Connections',
+                style: SereneTypography.headlineSmall.copyWith(
+                  color: SereneColors.onSurface,
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: _connectionData.isEmpty
-                ? const Center(child: Text('暂无数据'))
-                : LineChart(
-                    LineChartData(
-                      gridData: FlGridData(show: true),
-                      titlesData: FlTitlesData(show: false),
-                      borderData: FlBorderData(show: false),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: _connectionData,
-                          isCurved: true,
-                          color: Colors.green,
-                          barWidth: 2,
-                          dotData: FlDotData(show: false),
-                          belowBarData: BarAreaData(
-                            show: true,
-                            color: Colors.green.withOpacity(0.1),
-                          ),
-                        ),
-                      ],
+              ),
+            ],
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          SizedBox(
+            height: 200,
+            child: _connectionData.isEmpty
+              ? Center(
+                  child: Text(
+                    'No data',
+                    style: SereneTypography.bodyMedium.copyWith(
+                      color: SereneColors.onSurfaceVariant,
                     ),
                   ),
-            ),
-          ],
-        ),
+                )
+              : LineChart(
+                  LineChartData(
+                    gridData: FlGridData(show: true),
+                    titlesData: FlTitlesData(show: false),
+                    borderData: FlBorderData(show: false),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: _connectionData,
+                        isCurved: true,
+                        color: SereneColors.safe,
+                        barWidth: 2,
+                        dotData: FlDotData(show: false),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: SereneColors.safe.withValues(alpha: 0.1),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildLatencyChart() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.speed, color: Colors.orange[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '延迟 (ms)',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.speed, color: SereneColors.warning, size: 20),
+              const SizedBox(width: SereneSpacing.sm),
+              Text(
+                'Latency (ms)',
+                style: SereneTypography.headlineSmall.copyWith(
+                  color: SereneColors.onSurface,
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: _latencyData.isEmpty
-                ? const Center(child: Text('暂无数据'))
-                : LineChart(
-                    LineChartData(
-                      gridData: FlGridData(show: true),
-                      titlesData: FlTitlesData(show: false),
-                      borderData: FlBorderData(show: false),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: _latencyData,
-                          isCurved: true,
-                          color: Colors.orange,
-                          barWidth: 2,
-                          dotData: FlDotData(show: false),
-                          belowBarData: BarAreaData(
-                            show: true,
-                            color: Colors.orange.withOpacity(0.1),
-                          ),
-                        ),
-                      ],
+              ),
+            ],
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          SizedBox(
+            height: 200,
+            child: _latencyData.isEmpty
+              ? Center(
+                  child: Text(
+                    'No data',
+                    style: SereneTypography.bodyMedium.copyWith(
+                      color: SereneColors.onSurfaceVariant,
                     ),
                   ),
-            ),
-          ],
-        ),
+                )
+              : LineChart(
+                  LineChartData(
+                    gridData: FlGridData(show: true),
+                    titlesData: FlTitlesData(show: false),
+                    borderData: FlBorderData(show: false),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: _latencyData,
+                        isCurved: true,
+                        color: SereneColors.warning,
+                        barWidth: 2,
+                        dotData: FlDotData(show: false),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: SereneColors.warning.withValues(alpha: 0.1),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+          ),
+        ],
       ),
     );
   }
 
+  /// 构建连接列表
   Widget _buildConnectionsList() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.list, color: Colors.purple[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '活跃连接',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.list, color: SereneColors.primary, size: 20),
+              const SizedBox(width: SereneSpacing.sm),
+              Text(
+                'Active Connections',
+                style: SereneTypography.headlineSmall.copyWith(
+                  color: SereneColors.onSurface,
                 ),
-                const Spacer(),
-                Text(
-                  '${_connections.length} 个连接',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (_connections.isEmpty)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32),
-                  child: Text(
-                    '暂无活跃连接',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-              )
-            else
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _connections.length,
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  final conn = _connections[index];
-                  return _buildConnectionItem(conn);
-                },
               ),
-          ],
-        ),
+              const Spacer(),
+              Text(
+                '${_connections.length} connections',
+                style: SereneTypography.bodySmall.copyWith(
+                  color: SereneColors.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          if (_connections.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(SereneSpacing.xl),
+                child: Text(
+                  'No active connections',
+                  style: SereneTypography.bodyMedium.copyWith(
+                    color: SereneColors.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _connections.length,
+              separatorBuilder: (context, index) => Divider(
+                color: SereneColors.outlineVariant.withValues(alpha: 0.2),
+              ),
+              itemBuilder: (context, index) {
+                final conn = _connections[index];
+                return _buildConnectionItem(conn);
+              },
+            ),
+        ],
       ),
     );
   }
@@ -537,28 +896,53 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
     final now = DateTime.now().millisecondsSinceEpoch / 1000;
     final duration = now - connectedAt;
     final durationStr = duration < 60 
-      ? '${duration.round()}秒'
+      ? '${duration.round()}s'
       : duration < 3600 
-        ? '${(duration / 60).round()}分钟'
-        : '${(duration / 3600).round()}小时';
+        ? '${(duration / 60).round()}m'
+        : '${(duration / 3600).round()}h';
     
     return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: _getClientTypeColor(clientType).withOpacity(0.2),
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: _getClientTypeColor(clientType).withValues(alpha: 0.2),
+        ),
         child: Icon(
           _getClientTypeIcon(clientType),
           color: _getClientTypeColor(clientType),
+          size: 20,
         ),
       ),
       title: Text(
         clientId,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: SereneTypography.labelLarge.copyWith(
+          color: SereneColors.onSurface,
+        ),
       ),
-      subtitle: Text('$clientType • 连接时长: $durationStr'),
+      subtitle: Text(
+        '$clientType • Duration: $durationStr',
+        style: SereneTypography.bodySmall.copyWith(
+          color: SereneColors.onSurfaceVariant,
+        ),
+      ),
       trailing: deviceId != null 
-        ? Chip(
-            label: Text('设备 $deviceId'),
-            backgroundColor: Colors.blue[100],
+        ? Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 4,
+            ),
+            decoration: BoxDecoration(
+              color: SereneColors.primaryContainer.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(SereneSpacing.radiusDefault),
+            ),
+            child: Text(
+              'Device $deviceId',
+              style: SereneTypography.labelMedium.copyWith(
+                color: SereneColors.primary,
+              ),
+            ),
           )
         : null,
     );
@@ -566,12 +950,12 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
 
   Color _getClientTypeColor(String type) {
     switch (type) {
-      case 'video_viewer': return Colors.blue;
-      case 'audio_device': return Colors.green;
-      case 'agent_viewer': return Colors.purple;
-      case 'intercom_speaker': return Colors.orange;
-      case 'intercom_listener': return Colors.teal;
-      default: return Colors.grey;
+      case 'video_viewer': return SereneColors.primary;
+      case 'audio_device': return SereneColors.safe;
+      case 'agent_viewer': return SereneColors.tertiary;
+      case 'intercom_speaker': return SereneColors.warning;
+      case 'intercom_listener': return SereneColors.secondary;
+      default: return SereneColors.outline;
     }
   }
 
@@ -584,81 +968,5 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
       case 'intercom_listener': return Icons.hearing;
       default: return Icons.device_unknown;
     }
-  }
-
-  Widget _buildAudioStats() {
-    final audio = _audioStats?['audio_stats'] ?? {};
-    final bufferSizes = audio['buffer_sizes'] as Map<String, dynamic>? ?? {};
-    
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.audiotrack, color: Colors.teal[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '音频统计',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildStatRow('活跃设备', '${audio['active_devices'] ?? 0}'),
-            _buildStatRow('流式传输设备', '${audio['streaming_devices'] ?? 0}'),
-            if (bufferSizes.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                '缓冲区状态',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
-                ),
-              ),
-              const SizedBox(height: 8),
-              ...bufferSizes.entries.map((entry) {
-                return _buildStatRow('设备 ${entry.key}', '${entry.value} 块');
-              }).toList(),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

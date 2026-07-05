@@ -38,6 +38,7 @@
   "register": "注册",
   "error_empty_fields": "电子邮件和密码不能为空",
   "error_invalid_credentials": "无效的电子邮件或密码",
+  "password_length_hint": "密码长度 6-72 个字符",
 
   "create_account": "创建账户",
   "username_hint": "用户名（默认：User123）",

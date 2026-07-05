@@ -30,14 +30,13 @@ class AuthService {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('email', email);
         await prefs.setString('username', username);
-        debugPrint("Register successful, email & username saved.");
         return true;
       } else {
-        debugPrint("Register failed: ${response.body}");
+        debugPrint("注册失败: ${response.body}");
         return false;
       }
     } catch (e) {
-      debugPrint("Register Error: $e");
+      debugPrint("注册错误: $e");
       return false;
     }
   }
@@ -69,14 +68,13 @@ class AuthService {
           await prefs.setString('email', email);
           await prefs.setString('username', username);
           await prefs.setInt('user_id', userId ?? 0);
-          debugPrint("Login successful");
           return true;
         }
       }
-      debugPrint("Login failed: Invalid credentials");
+      debugPrint("登录失败: 无效凭证");
       return false;
     } catch (e) {
-      debugPrint("Login Error: $e");
+      debugPrint("登录错误: $e");
       return false;
     }
   }
@@ -85,11 +83,10 @@ class AuthService {
   Future<bool> changePassword(String oldPassword, String newPassword) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? email = prefs.getString('email');
       String? token = prefs.getString('token');
 
-      if (email == null || token == null) {
-        debugPrint("Error: User not logged in.");
+      if (token == null) {
+        debugPrint("错误: 用户未登录");
         return false;
       }
 
@@ -100,7 +97,6 @@ class AuthService {
           'Authorization': 'Bearer $token',
         },
         body: json.encode({
-          'email': email,
           'old_password': oldPassword,
           'new_password': newPassword,
         }),
@@ -108,7 +104,7 @@ class AuthService {
 
       return response.statusCode == 200;
     } catch (e) {
-      debugPrint("Error changing password: $e");
+      debugPrint("修改密码错误: $e");
       return false;
     }
   }
@@ -128,7 +124,7 @@ class AuthService {
       final expirationDate = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
       return DateTime.now().isAfter(expirationDate);
     } catch (e) {
-      debugPrint("Error decoding token: $e");
+      debugPrint("解码token错误: $e");
       return true;
     }
   }
@@ -137,7 +133,7 @@ class AuthService {
   Future<void> fetchDeviceData(BuildContext context) async {
     String? token = await getToken();
     if (token == null || await isTokenExpired(token)) {
-      debugPrint("Token expired or missing, please log in again.");
+      debugPrint("Token已过期或缺失，请重新登录");
       if (context.mounted) {
         _showLoginDialog(context);
       }
@@ -148,7 +144,7 @@ class AuthService {
       );
 
       if (response.statusCode == 401) {
-        debugPrint("Token expired or unauthorized.");
+        debugPrint("Token已过期或未授权");
         if (context.mounted) {
           _showLoginDialog(context);
         }
@@ -162,8 +158,8 @@ class AuthService {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text("Session Expired"),
-        content: const Text("Your session has expired. Please log in again."),
+        title: const Text("会话已过期"),
+        content: const Text("您的会话已过期，请重新登录"),
         actions: [
           TextButton(
             onPressed: () {
@@ -206,7 +202,7 @@ class AuthService {
       String? token = prefs.getString('token');
 
       if (token == null) {
-        debugPrint("Error: User not logged in.");
+        debugPrint("错误: 用户未登录");
         return false;
       }
 
@@ -221,14 +217,13 @@ class AuthService {
 
       if (response.statusCode == 200) {
         await prefs.setString('username', newUsername);
-        debugPrint("Username updated successfully.");
         return true;
       } else {
-        debugPrint("Failed to update username: ${response.body}");
+        debugPrint("更新用户名失败: ${response.body}");
         return false;
       }
     } catch (e) {
-      debugPrint("Error updating username: $e");
+      debugPrint("更新用户名错误: $e");
       return false;
     }
   }

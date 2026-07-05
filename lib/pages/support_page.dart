@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // 用于复制功能
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../generated/l10n.dart';
+import '../theme/serene_colors.dart';
+import '../theme/serene_spacing.dart';
+import '../theme/serene_typography.dart';
+import '../widgets/glass_widgets.dart';
+import '../widgets/serene_widgets.dart';
 
 class SupportPage extends StatefulWidget {
   @override
   _SupportPageState createState() => _SupportPageState();
 }
 
-class _SupportPageState extends State<SupportPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    // 初始化 TabController，创建两个标签页面
-    _tabController = TabController(length: 2, vsync: this);
-  }
+class _SupportPageState extends State<SupportPage> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _messageController = TextEditingController();
 
   @override
   void dispose() {
-    _tabController.dispose(); // 释放 TabController
+    _nameController.dispose();
+    _emailController.dispose();
+    _messageController.dispose();
     super.dispose();
   }
 
@@ -34,28 +36,23 @@ class _SupportPageState extends State<SupportPage> with SingleTickerProviderStat
     }
   }
 
-  void _showEmailDialog(BuildContext context, String email) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('联系邮箱'),
-        content: SelectableText(email),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: email));
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('邮箱地址已复制')),
-              );
-            },
-            child: const Text('复制邮箱'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('关闭'),
-          ),
-        ],
+  // 打开邮箱
+  Future<void> _launchEmail(String email) async {
+    final Uri uri = Uri(scheme: 'mailto', path: email);
+    try {
+      await launchUrl(uri);
+    } catch (e) {
+      print('打开邮箱失败: $e');
+    }
+  }
+
+  // 复制到剪贴板
+  void _copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('已复制到剪贴板'),
+        backgroundColor: SereneColors.primary,
       ),
     );
   }
@@ -63,50 +60,78 @@ class _SupportPageState extends State<SupportPage> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // 使得底部导航栏悬浮
-      appBar: AppBar(
-        title: Text(S.of(context).support_page_title),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white.withOpacity(0.8),
-        elevation: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.blueAccent,
-          labelColor: Colors.blueAccent,
-          unselectedLabelColor: Colors.grey,
-          tabs: [
-            Tab(text: S.of(context).faq_tab_title),
-            Tab(text: S.of(context).contact_tab_title),
-          ],
+      extendBody: true,
+      backgroundColor: SereneColors.surface,
+      appBar: GlassAppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: SereneColors.primary.withValues(alpha: 0.2),
+                width: 2,
+              ),
+            ),
+            child: CircleAvatar(
+              radius: 16,
+              backgroundImage: AssetImage('lib/assets/images/v.png'),
+              backgroundColor: Colors.transparent,
+            ),
+          ),
         ),
+        title: Text(
+          'Serene Guardian',
+          style: SereneTypography.headlineMedium.copyWith(
+            color: SereneColors.primary,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: SereneSpacing.sm),
+            child: SereneIconButton(
+              icon: Icons.settings_outlined,
+              iconColor: SereneColors.primary,
+              size: 40,
+              tooltip: 'Settings',
+              onPressed: () {
+                // TODO: 打开设置页面
+              },
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         bottom: false,
         child: Stack(
           children: [
-            // 背景渐变
+            // 背景色
             Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFE3FDFD),
-                    Color(0xFFFFE6FA),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
+              color: SereneColors.surface,
             ),
-            // TabBarView 内容区域
-            Padding(
-              padding: const EdgeInsets.only(bottom: 70.0), // 留出底部导航栏空间
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildFAQTab(), // 常见问题页面内容
-                  _buildContactTab(), // 联系客服页面内容
-                ],
+            // 主内容
+            SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                SereneSpacing.marginMobile,
+                SereneSpacing.lg,
+                SereneSpacing.marginMobile,
+                SereneSpacing.xl,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 900),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 标题区域
+                      _buildHeader(),
+                      const SizedBox(height: SereneSpacing.lg),
+                      // 两列网格布局
+                      _buildContentGrid(),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
@@ -114,116 +139,328 @@ class _SupportPageState extends State<SupportPage> with SingleTickerProviderStat
       ),
     );
   }
-  // 常见问题Tab
-  Widget _buildFAQTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        children: [
-          _buildFAQItem(S.of(context).faq_question_1, S.of(context).faq_answer_1),
-          _buildFAQItem(S.of(context).faq_question_2, S.of(context).faq_answer_2),
-          _buildFAQItem(S.of(context).faq_question_3, S.of(context).faq_answer_3),
-        ],
-      ),
-    );
-  }
 
-  // 联系客服Tab
-  Widget _buildContactTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          _buildContactCard(
-            icon: Icons.phone,
-            title: S.of(context).contact_phone_title,
-            description: S.of(context).contact_phone_description,
-            onTap: () => _launchPhone('19553510583'), // 拨号操作
+  /// 构建标题区域
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Help & Support',
+          style: SereneTypography.headlineLarge.copyWith(
+            color: SereneColors.primary,
           ),
-          const SizedBox(height: 16.0),
-          _buildContactCard(
-            icon: Icons.email,
-            title: S.of(context).contact_email_title,
-            description: S.of(context).contact_email_description,
-            onTap: () => _showEmailDialog(context, '508942455@qq.com'),
-          ),
-          const SizedBox(height: 16.0),
-          _buildContactCard(
-            icon: Icons.chat,
-            title: S.of(context).contact_chat_title,
-            description: S.of(context).contact_chat_description,
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text('扫码添加微信'),
-                  content: Image.asset(
-                    'lib/assets/images/Wechat.png',
-                    fit: BoxFit.contain,
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('关闭'),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 常见问题条目
-  Widget _buildFAQItem(String question, String answer) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8.0),
-      child: ListTile(
-        title: Text(question, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Text(answer),
         ),
+        const SizedBox(height: SereneSpacing.xs),
+        Text(
+          "We're here to help you and your baby rest easy.",
+          style: SereneTypography.bodyLarge.copyWith(
+            color: SereneColors.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 构建内容网格
+  Widget _buildContentGrid() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          // 桌面端：两列布局
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _buildContactCard()),
+              const SizedBox(width: SereneSpacing.lg),
+              Expanded(child: _buildFeedbackForm()),
+            ],
+          );
+        } else {
+          // 移动端：单列布局
+          return Column(
+            children: [
+              _buildContactCard(),
+              const SizedBox(height: SereneSpacing.lg),
+              _buildFeedbackForm(),
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  /// 构建联系卡片
+  Widget _buildContactCard() {
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Contact Us',
+            style: SereneTypography.headlineSmall.copyWith(
+              color: SereneColors.primary,
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.sm),
+          Text(
+            'Reach out to our support team directly.',
+            style: SereneTypography.bodyMedium.copyWith(
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.lg),
+          // Email Support
+          _buildContactItem(
+            icon: Icons.mail_outline,
+            title: 'Email Support',
+            subtitle: 'support@babyapp.com',
+            onTap: () => _launchEmail('support@babyapp.com'),
+            onCopy: () => _copyToClipboard('support@babyapp.com'),
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          // Phone Support
+          _buildContactItem(
+            icon: Icons.phone_in_talk_outlined,
+            title: 'Phone Support',
+            subtitle: '+1 800-BABY',
+            onTap: () => _launchPhone('18002229'),
+            onCopy: () => _copyToClipboard('+1 800-BABY'),
+          ),
+          const SizedBox(height: SereneSpacing.lg),
+          // Browse FAQ 链接
+          GestureDetector(
+            onTap: () {
+              // TODO: 导航到FAQ页面
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Browse FAQ',
+                  style: SereneTypography.labelLarge.copyWith(
+                    color: SereneColors.primary,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward,
+                  size: 20,
+                  color: SereneColors.primary,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // 联系客服的卡片
-  Widget _buildContactCard({
+  /// 构建联系项目
+  Widget _buildContactItem({
     required IconData icon,
     required String title,
-    required String description,
+    required String subtitle,
     required VoidCallback onTap,
+    required VoidCallback onCopy,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12.0),
-      child: Card(
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Icon(icon, size: 40.0, color: Colors.blueAccent),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8.0),
-                    Text(description, style: const TextStyle(fontSize: 14.0, color: Colors.grey)),
-                  ],
-                ),
+      child: Container(
+        padding: const EdgeInsets.all(SereneSpacing.md),
+        decoration: BoxDecoration(
+          color: SereneColors.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(SereneSpacing.radiusMd),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: SereneColors.primaryContainer,
               ),
-              Icon(Icons.arrow_forward, color: Colors.grey),
-            ],
-          ),
+              child: Icon(
+                icon,
+                size: 24,
+                color: SereneColors.onPrimaryContainer,
+              ),
+            ),
+            const SizedBox(width: SereneSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: SereneTypography.labelLarge.copyWith(
+                      color: SereneColors.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: SereneSpacing.xs),
+                  Text(
+                    subtitle,
+                    style: SereneTypography.bodySmall.copyWith(
+                      color: SereneColors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: onCopy,
+              child: Icon(
+                Icons.content_copy_outlined,
+                size: 20,
+                color: SereneColors.outline,
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  /// 构建反馈表单
+  Widget _buildFeedbackForm() {
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Send Feedback',
+            style: SereneTypography.headlineSmall.copyWith(
+              color: SereneColors.primary,
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.sm),
+          Text(
+            'Have a suggestion or need help? Send us a message.',
+            style: SereneTypography.bodyMedium.copyWith(
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.lg),
+          // Name 输入框
+          _buildInputField(
+            controller: _nameController,
+            label: 'Name',
+            hintText: 'Your Name',
+            icon: Icons.person_outline,
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          // Email 输入框
+          _buildInputField(
+            controller: _emailController,
+            label: 'Email',
+            hintText: 'your.email@example.com',
+            icon: Icons.email_outlined,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          // Message 输入框
+          _buildInputField(
+            controller: _messageController,
+            label: 'Message',
+            hintText: 'How can we help?',
+            icon: Icons.message_outlined,
+            maxLines: 4,
+          ),
+          const SizedBox(height: SereneSpacing.lg),
+          // Send Message 按钮
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: () {
+                // TODO: 发送反馈
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('感谢您的反馈！'),
+                    backgroundColor: SereneColors.primary,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: SereneColors.primary,
+                foregroundColor: SereneColors.onPrimary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: SereneSpacing.buttonRadius,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Send Message',
+                    style: SereneTypography.labelLarge.copyWith(
+                      color: SereneColors.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: SereneSpacing.sm),
+                  const Icon(Icons.send, size: 18),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建输入框
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required String hintText,
+    required IconData icon,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: SereneTypography.labelMedium.copyWith(
+            color: SereneColors.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: SereneSpacing.xs),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(SereneSpacing.radiusDefault),
+            color: SereneColors.primary.withValues(alpha: 0.05),
+            border: Border.all(
+              color: SereneColors.outline.withValues(alpha: 0.2),
+              width: 1,
+            ),
+          ),
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            maxLines: maxLines,
+            style: SereneTypography.bodyMedium.copyWith(
+              color: SereneColors.onSurface,
+            ),
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: SereneTypography.bodyMedium.copyWith(
+                color: SereneColors.outlineVariant,
+              ),
+              prefixIcon: maxLines == 1
+                  ? Icon(icon, color: SereneColors.outline, size: 20)
+                  : null,
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              contentPadding: const EdgeInsets.all(SereneSpacing.md),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

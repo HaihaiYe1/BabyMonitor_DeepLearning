@@ -38,6 +38,20 @@ class CameraNotifier extends StateNotifier<List<Device>> {
       print('更新设备失败: $e');
     }
   }
+
+  /// 删除设备并同步到后端
+  Future<bool> deleteDevice(int deviceId) async {
+    try {
+      final success = await repository.deleteDevice(deviceId);
+      if (success) {
+        state = state.where((device) => device.id != deviceId.toString()).toList();
+      }
+      return success;
+    } catch (e) {
+      print('删除设备失败: $e');
+      return false;
+    }
+  }
 }
 
 /// 设备管理 Provider（绑定 `CameraNotifier`）
@@ -90,6 +104,84 @@ class DeviceRepository {
     } catch (e) {
       print("通过 Token 请求设备数据失败: $e");
       throw Exception("设备数据加载失败");
+    }
+  }
+
+  /// 添加新设备到后端
+  Future<Map<String, dynamic>> addDevice({
+    required String name,
+    required String ip,
+    String status = 'offline',
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/add',
+        data: {
+          'name': name,
+          'ip': ip,
+          'status': status,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception('添加设备失败: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("添加设备请求失败: $e");
+      throw Exception("添加设备失败");
+    }
+  }
+
+  /// 获取第一个设备的RTSP地址
+  Future<String?> getRtspUrl() async {
+    try {
+      final response = await _dio.get('/get_rtsp_url');
+
+      if (response.statusCode == 200) {
+        return response.data['rtspUrl'];
+      } else {
+        throw Exception('获取RTSP地址失败: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("获取RTSP地址请求失败: $e");
+      return null;
+    }
+  }
+
+  /// 删除设备
+  Future<bool> deleteDevice(int deviceId) async {
+    try {
+      final response = await _dio.delete(
+        '/delete',
+        queryParameters: {'device_id': deviceId},
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('删除设备失败: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("删除设备请求失败: $e");
+      return false;
+    }
+  }
+
+  /// 获取指定设备详情
+  Future<Device?> getDeviceById(int deviceId) async {
+    try {
+      final response = await _dio.get('/$deviceId');
+
+      if (response.statusCode == 200) {
+        return Device.fromJson(response.data);
+      } else {
+        throw Exception('获取设备详情失败: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("获取设备详情请求失败: $e");
+      return null;
     }
   }
 

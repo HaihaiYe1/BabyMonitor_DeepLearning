@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(S.of(context).baby_monitor),
         centerTitle: true,
         automaticallyImplyLeading: false, // 禁止自动生成默认的左侧按钮
-        backgroundColor: Colors.white.withOpacity(0.8), // 半透明背景
+        backgroundColor: Colors.white.withValues(alpha: 0.8), // 半透明背景
         elevation: 0, // 去掉阴影
         leading: Builder(
           builder: (context) => IconButton(
@@ -148,12 +148,12 @@ class _HomePageState extends State<HomePage> {
     return Container(
       padding: const EdgeInsets.only(bottom: 10.0), // 适配安全区域
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
-        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 15,
             offset: const Offset(0, -5),
           ),
@@ -335,7 +335,7 @@ class _HomeContentState extends State<_HomeContent> {
                     borderRadius: BorderRadius.circular(20.0),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),

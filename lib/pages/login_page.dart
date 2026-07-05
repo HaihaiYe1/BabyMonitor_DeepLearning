@@ -206,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
         hintText: hintText,
         hintStyle: TextStyle(color: AppColors.secondaryText), // 提示文本颜色
         filled: true,
-        fillColor: Colors.white.withOpacity(0.8), // 半透明白色背景
+        fillColor: Colors.white.withValues(alpha: 0.8), // 半透明白色背景
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -259,12 +259,12 @@ class GlassMorphismContainer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15), // 玻璃效果的半透明背景
+        color: Colors.white.withValues(alpha: 0.15), // 玻璃效果的半透明背景
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5), // 边框
+        border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.5), // 边框
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2), // 柔和灰色阴影
+            color: Colors.grey.withValues(alpha: 0.2), // 柔和灰色阴影
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),

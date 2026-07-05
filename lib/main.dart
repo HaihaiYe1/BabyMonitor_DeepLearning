@@ -10,6 +10,7 @@ import 'services/auth_service.dart';
 import 'providers/language_provider.dart';
 import 'generated/l10n.dart';
 import 'utils/platform_adapter.dart';
+import 'theme/serene_theme.dart';
 
 void main() async {
   // 确保 Flutter 框架已经初始化
@@ -49,9 +50,9 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Baby Monitor',
       debugShowCheckedModeBanner: false,
-      theme: _buildPlatformTheme(context, Brightness.light),
-      darkTheme: _buildPlatformTheme(context, Brightness.dark),
-      themeMode: ThemeMode.system,
+      theme: SereneTheme.lightTheme,
+      darkTheme: SereneTheme.darkTheme,
+      themeMode: ThemeMode.light,
       initialRoute: initialRoute,
       routes: AppRoutes.routes,
       locale: appLocale,

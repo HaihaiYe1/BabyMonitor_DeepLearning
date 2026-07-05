@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import '../pages/data_analysis_page.dart';
 import '../pages/faq_page.dart';
 import '../pages/home_page.dart';
+import '../pages/serene_home_page.dart';
 import '../pages/login_page.dart';
+import '../pages/serene_login_page.dart';
 import '../pages/register_page.dart';
+import '../pages/serene_register_page.dart';
 import '../pages/account_page.dart';
 import '../pages/device_management_page.dart';
 import '../pages/support_page.dart';
@@ -12,15 +15,16 @@ import '../pages/chat_page.dart';
 import '../pages/advice_page.dart';
 import '../pages/smart_home_page.dart';
 import '../pages/live_monitor_page.dart';
+import '../pages/serene_live_monitor_page.dart';
 import '../pages/monitoring_dashboard.dart';
 
 
 
 class AppRoutes {
   static Map<String, WidgetBuilder> routes = {
-    '/login': (context) => LoginPage(),
-    '/home': (context) => HomePage(),
-    '/register': (context) => RegisterPage(),
+    '/login': (context) => SereneLoginPage(),
+    '/home': (context) => SereneHomePage(),
+    '/register': (context) => SereneRegisterPage(),
     '/account': (context) => AccountPage(),
     '/devices': (context) => DeviceManagementPage(),
     '/support': (context) => SupportPage(),

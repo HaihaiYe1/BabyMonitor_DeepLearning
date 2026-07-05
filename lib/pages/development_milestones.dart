@@ -4,6 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../widgets/chart_widget.dart';
 import '../generated/l10n.dart';
+import '../theme/serene_colors.dart';
+import '../theme/serene_spacing.dart';
+import '../theme/serene_typography.dart';
+import '../widgets/glass_widgets.dart';
+import '../widgets/serene_widgets.dart';
 
 class GrowthRecord {
   final int month;
@@ -107,7 +112,6 @@ class _DevelopmentMilestonesPageState extends State<DevelopmentMilestonesPage> {
     return tipsMap.containsKey(month) ? [tipsMap[month]!] : [];
   }
 
-
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -120,113 +124,298 @@ class _DevelopmentMilestonesPageState extends State<DevelopmentMilestonesPage> {
     };
 
     return Scaffold(
-      extendBody: true, // 使得底部导航栏浮动
-      appBar: AppBar(
-        title: Text(s.pageTitle),
-        centerTitle: true,
-        automaticallyImplyLeading: false, // 去掉返回按钮
-        backgroundColor: Colors.white.withOpacity(0.8), // 半透明背景
-        elevation: 0, // 去掉阴影
+      extendBody: true,
+      backgroundColor: SereneColors.surface,
+      appBar: GlassAppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            child: const Icon(
+              Icons.arrow_back,
+              color: SereneColors.primary,
+            ),
+          ),
+        ),
+        title: Text(
+          s.pageTitle,
+          style: SereneTypography.headlineSmall.copyWith(
+            color: SereneColors.primary,
+          ),
+        ),
       ),
       body: SafeArea(
-        bottom: false, // 保留底部区域的渐变效果
+        bottom: false,
         child: Stack(
           children: [
-            // 背景渐变
+            // 背景色
             Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFE3FDFD), // 浅蓝色
-                    Color(0xFFFFE6FA), // 浅粉色
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
+              color: SereneColors.surface,
             ),
             // 页面内容
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: ListView(
+            SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                SereneSpacing.marginMobile,
+                SereneSpacing.lg,
+                SereneSpacing.marginMobile,
+                SereneSpacing.xl,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(s.growthTitle, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Form(
-                    key: _formKey,
-                    child: Column(children: [
-                      Row(children: [
-                        Expanded(child: TextFormField(
-                          decoration: InputDecoration(labelText: s.monthLabel),
-                          keyboardType: TextInputType.number,
-                          validator: (v) => v!.isEmpty ? s.requiredField : null,
-                          onSaved: (v) => _month = int.parse(v!),
-                        )),
-                        const SizedBox(width: 8),
-                        Expanded(child: TextFormField(
-                          decoration: InputDecoration(labelText: s.weightLabel),
-                          keyboardType: TextInputType.number,
-                          validator: (v) => v!.isEmpty ? s.requiredField : null,
-                          onSaved: (v) => _weight = double.parse(v!),
-                        )),
-                      ]),
-                      Row(children: [
-                        Expanded(child: TextFormField(
-                          decoration: InputDecoration(labelText: s.heightLabel),
-                          keyboardType: TextInputType.number,
-                          validator: (v) => v!.isEmpty ? s.requiredField : null,
-                          onSaved: (v) => _height = double.parse(v!),
-                        )),
-                        const SizedBox(width: 8),
-                        Expanded(child: TextFormField(
-                          decoration: InputDecoration(labelText: s.headCircLabel),
-                          keyboardType: TextInputType.number,
-                          validator: (v) => v!.isEmpty ? s.requiredField : null,
-                          onSaved: (v) => _headCirc = double.parse(v!),
-                        )),
-                      ]),
-                      const SizedBox(height: 10),
-                      ElevatedButton(onPressed: _addRecord, child: Text(s.addRecord)),
-                    ]),
-                  ),
-                  const SizedBox(height: 20),
-                  MultiLineChart(
-                    title: s.weightTrend,
-                    dataSeries: weightData,
-                    colorMap: {s.weightLabel: Colors.blue},
-                    xLabelUnit: s.monthLabel,
-                    interval: 1,
-                  ),
-                  const SizedBox(height: 10),
-                  MultiLineChart(
-                    title: s.heightTrend,
-                    dataSeries: heightData,
-                    colorMap: {s.heightLabel: Colors.green},
-                    xLabelUnit: s.monthLabel,
-                    interval: 1,
-                  ),
-                  const SizedBox(height: 20),
-                  Text(s.milestoneTitle, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  ...records.map((r) {
-                    final tips = _milestoneTips(r.month, s);
-                    return tips.isEmpty
-                        ? const SizedBox.shrink()
-                        : Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(  S.of(context).milestonePrefix(r.month),
-                              style: const TextStyle(fontWeight: FontWeight.bold)),
-                          ...tips.map((tip) => Text("• $tip")),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+                  // 生长记录表单
+                  _buildGrowthForm(s),
+                  const SizedBox(height: SereneSpacing.lg),
+                  // 体重趋势图
+                  if (records.isNotEmpty) ...[
+                    _buildChart(
+                      title: s.weightTrend,
+                      dataSeries: weightData,
+                      color: SereneColors.primary,
+                    ),
+                    const SizedBox(height: SereneSpacing.lg),
+                    _buildChart(
+                      title: s.heightTrend,
+                      dataSeries: heightData,
+                      color: SereneColors.safe,
+                    ),
+                    const SizedBox(height: SereneSpacing.lg),
+                  ],
+                  // 里程碑提示
+                  _buildMilestoneTips(s),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 构建生长记录表单
+  Widget _buildGrowthForm(S s) {
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              s.growthTitle,
+              style: SereneTypography.headlineSmall.copyWith(
+                color: SereneColors.onSurface,
+              ),
+            ),
+            const SizedBox(height: SereneSpacing.md),
+            // 月龄和体重
+            Row(
+              children: [
+                Expanded(
+                  child: _buildInputField(
+                    label: s.monthLabel,
+                    keyboardType: TextInputType.number,
+                    validator: (v) => v!.isEmpty ? s.requiredField : null,
+                    onSaved: (v) => _month = int.parse(v!),
+                  ),
+                ),
+                const SizedBox(width: SereneSpacing.md),
+                Expanded(
+                  child: _buildInputField(
+                    label: s.weightLabel,
+                    keyboardType: TextInputType.number,
+                    validator: (v) => v!.isEmpty ? s.requiredField : null,
+                    onSaved: (v) => _weight = double.parse(v!),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: SereneSpacing.md),
+            // 身高和头围
+            Row(
+              children: [
+                Expanded(
+                  child: _buildInputField(
+                    label: s.heightLabel,
+                    keyboardType: TextInputType.number,
+                    validator: (v) => v!.isEmpty ? s.requiredField : null,
+                    onSaved: (v) => _height = double.parse(v!),
+                  ),
+                ),
+                const SizedBox(width: SereneSpacing.md),
+                Expanded(
+                  child: _buildInputField(
+                    label: s.headCircLabel,
+                    keyboardType: TextInputType.number,
+                    validator: (v) => v!.isEmpty ? s.requiredField : null,
+                    onSaved: (v) => _headCirc = double.parse(v!),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: SereneSpacing.lg),
+            // 添加按钮
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: _addRecord,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: SereneColors.primary,
+                  foregroundColor: SereneColors.onPrimary,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: SereneSpacing.buttonRadius,
+                  ),
+                ),
+                child: Text(
+                  s.addRecord,
+                  style: SereneTypography.labelLarge.copyWith(
+                    color: SereneColors.onPrimary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 构建输入框
+  Widget _buildInputField({
+    required String label,
+    required TextInputType keyboardType,
+    required FormFieldValidator<String> validator,
+    required FormFieldSetter<String> onSaved,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(SereneSpacing.radiusDefault),
+        color: SereneColors.primary.withValues(alpha: 0.05),
+        border: Border.all(
+          color: SereneColors.outline.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: TextFormField(
+        keyboardType: keyboardType,
+        validator: validator,
+        onSaved: onSaved,
+        style: SereneTypography.bodyMedium.copyWith(
+          color: SereneColors.onSurface,
+        ),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: SereneTypography.bodySmall.copyWith(
+            color: SereneColors.onSurfaceVariant,
+          ),
+          border: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: SereneSpacing.md,
+            vertical: SereneSpacing.md,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 构建图表
+  Widget _buildChart({
+    required String title,
+    required Map<String, List<FlSpot>> dataSeries,
+    required Color color,
+  }) {
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: SereneTypography.headlineSmall.copyWith(
+              color: SereneColors.onSurface,
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          SizedBox(
+            height: 200,
+            child: MultiLineChart(
+              title: title,
+              dataSeries: dataSeries,
+              colorMap: {dataSeries.keys.first: color},
+              xLabelUnit: 'Month',
+              interval: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建里程碑提示
+  Widget _buildMilestoneTips(S s) {
+    if (records.isEmpty) return const SizedBox.shrink();
+
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            s.milestoneTitle,
+            style: SereneTypography.headlineSmall.copyWith(
+              color: SereneColors.onSurface,
+            ),
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          ...records.map((r) {
+            final tips = _milestoneTips(r.month, s);
+            return tips.isEmpty
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.only(bottom: SereneSpacing.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          s.milestonePrefix(r.month),
+                          style: SereneTypography.labelLarge.copyWith(
+                            color: SereneColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: SereneSpacing.xs),
+                        ...tips.map((tip) => Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                margin: const EdgeInsets.only(top: 6, right: 8),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: SereneColors.primaryContainer,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  tip,
+                                  style: SereneTypography.bodyMedium.copyWith(
+                                    color: SereneColors.onSurfaceVariant,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                      ],
+                    ),
+                  );
+          }).toList(),
+        ],
       ),
     );
   }

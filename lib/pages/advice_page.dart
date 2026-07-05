@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import '../services/rag_service.dart';
 import '../generated/l10n.dart';
+import '../theme/serene_colors.dart';
+import '../theme/serene_spacing.dart';
+import '../theme/serene_typography.dart';
+import '../widgets/glass_widgets.dart';
+import '../widgets/serene_widgets.dart';
 
 class AdvicePage extends StatefulWidget {
   const AdvicePage({Key? key}) : super(key: key);
@@ -11,14 +16,11 @@ class AdvicePage extends StatefulWidget {
 
 class _AdvicePageState extends State<AdvicePage> {
   final RagService _ragService = RagService();
-  final TextEditingController _situationController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   
   bool _isLoading = false;
-  Map<String, dynamic>? _adviceResult;
   List<Map<String, dynamic>> _searchResults = [];
   String _selectedCategory = 'general';
-  int? _babyAgeMonths;
 
   final List<String> _categories = [
     'general',
@@ -30,60 +32,28 @@ class _AdvicePageState extends State<AdvicePage> {
   ];
 
   final Map<String, String> _categoryNames = {
-    'general': '通用',
-    'sleep': '睡眠',
-    'feeding': '喂养',
-    'safety': '安全',
-    'health': '健康',
-    'development': '发育',
+    'general': 'All',
+    'sleep': 'Sleep',
+    'feeding': 'Feeding',
+    'safety': 'Safety',
+    'health': 'Health',
+    'development': 'Development',
   };
 
   @override
   void dispose() {
-    _situationController.dispose();
     _searchController.dispose();
     super.dispose();
-  }
-
-  Future<void> _getAdvice() async {
-    final situation = _situationController.text.trim();
-    if (situation.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请输入情况描述')),
-      );
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-      _adviceResult = null;
-    });
-
-    try {
-      final result = await _ragService.getAdvice(
-        situation: situation,
-        babyAgeMonths: _babyAgeMonths,
-      );
-
-      setState(() {
-        _adviceResult = result;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('获取建议失败: $e')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   Future<void> _searchKnowledge() async {
     final query = _searchController.text.trim();
     if (query.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请输入搜索内容')),
+        SnackBar(
+          content: Text('Please enter search content'),
+          backgroundColor: SereneColors.primary,
+        ),
       );
       return;
     }
@@ -105,12 +75,18 @@ class _AdvicePageState extends State<AdvicePage> {
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('搜索失败: ${result['error']}')),
+          SnackBar(
+            content: Text('Search failed: ${result['error']}'),
+            backgroundColor: SereneColors.error,
+          ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('搜索异常: $e')),
+        SnackBar(
+          content: Text('Search error: $e'),
+          backgroundColor: SereneColors.error,
+        ),
       );
     } finally {
       setState(() {
@@ -122,123 +98,64 @@ class _AdvicePageState extends State<AdvicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).parenting_advice ?? '育儿建议'),
-        backgroundColor: Colors.white.withOpacity(0.8),
-        elevation: 0,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFE3FDFD), Color(0xFFFFE6FA)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      extendBody: true,
+      backgroundColor: SereneColors.surface,
+      appBar: GlassAppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            child: const Icon(
+              Icons.arrow_back,
+              color: SereneColors.onSurfaceVariant,
+            ),
           ),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildAdviceSection(),
-              const SizedBox(height: 24),
-              _buildSearchSection(),
-              const SizedBox(height: 24),
-              if (_adviceResult != null) _buildAdviceResult(),
-              if (_searchResults.isNotEmpty) _buildSearchResults(),
-            ],
+        title: Text(
+          'Expert Advice',
+          style: SereneTypography.headlineSmall.copyWith(
+            color: SereneColors.primary,
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildAdviceSection() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        bottom: false,
+        child: Stack(
           children: [
-            Row(
-              children: [
-                Icon(Icons.lightbulb, color: Colors.amber[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '获取育儿建议',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
+            // 背景色
+            Container(
+              color: SereneColors.surface,
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _situationController,
-              decoration: InputDecoration(
-                labelText: '情况描述',
-                hintText: '例如：宝宝晚上总是哭闹...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-                fillColor: Colors.grey[50],
+            // 主内容
+            SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                SereneSpacing.marginMobile,
+                SereneSpacing.lg,
+                SereneSpacing.marginMobile,
+                SereneSpacing.xl,
               ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<int>(
-                    decoration: InputDecoration(
-                      labelText: '婴儿月龄（可选）',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 搜索区域
+                  _buildSearchSection(),
+                  const SizedBox(height: SereneSpacing.lg),
+                  // 结果列表
+                  if (_isLoading)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(SereneSpacing.xl),
+                        child: CircularProgressIndicator(
+                          color: SereneColors.primary,
+                        ),
                       ),
-                      filled: true,
-                      fillColor: Colors.grey[50],
-                    ),
-                    value: _babyAgeMonths,
-                    items: [
-                      const DropdownMenuItem(value: null, child: Text('不指定')),
-                      ...List.generate(24, (index) {
-                        return DropdownMenuItem(
-                          value: index + 1,
-                          child: Text('${index + 1}个月'),
-                        );
-                      }),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _babyAgeMonths = value;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  onPressed: _isLoading ? null : _getAdvice,
-                  icon: _isLoading
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.search),
-                  label: const Text('获取建议'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ],
+                    )
+                  else if (_searchResults.isNotEmpty)
+                    _buildSearchResults()
+                  else
+                    _buildDefaultAdviceCards(),
+                ],
+              ),
             ),
           ],
         ),
@@ -246,248 +163,282 @@ class _AdvicePageState extends State<AdvicePage> {
     );
   }
 
+  /// 构建搜索区域
   Widget _buildSearchSection() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.search, color: Colors.blue[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '搜索知识库',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
+    return Column(
+      children: [
+        // 搜索框
+        Container(
+          decoration: BoxDecoration(
+            color: SereneColors.primary.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+            border: Border.all(
+              color: SereneColors.outlineVariant.withValues(alpha: 0.3),
+              width: 1,
             ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      labelText: '搜索内容',
-                      hintText: '例如：婴儿睡眠...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[50],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: SereneSpacing.md),
+                child: Icon(
+                  Icons.search,
+                  color: SereneColors.outline,
+                  size: 20,
+                ),
+              ),
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  onSubmitted: (_) => _searchKnowledge(),
+                  style: SereneTypography.bodyMedium.copyWith(
+                    color: SereneColors.onSurface,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Search parenting advice...',
+                    hintStyle: SereneTypography.bodyMedium.copyWith(
+                      color: SereneColors.outline,
+                    ),
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: SereneSpacing.sm,
+                      vertical: SereneSpacing.md,
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  onPressed: _isLoading ? null : _searchKnowledge,
-                  icon: const Icon(Icons.search),
-                  label: const Text('搜索'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: SereneSpacing.sm),
+                child: GestureDetector(
+                  onTap: _isLoading ? null : _searchKnowledge,
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: SereneColors.primary,
+                    ),
+                    child: const Icon(
+                      Icons.search,
+                      size: 18,
+                      color: SereneColors.onPrimary,
                     ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              children: _categories.map((category) {
-                return ChoiceChip(
-                  label: Text(_categoryNames[category] ?? category),
-                  selected: _selectedCategory == category,
-                  onSelected: (selected) {
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: SereneSpacing.md),
+        // 筛选芯片
+        SizedBox(
+          height: 40,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _categories.length,
+            itemBuilder: (context, index) {
+              final category = _categories[index];
+              final isSelected = _selectedCategory == category;
+              return Padding(
+                padding: const EdgeInsets.only(right: SereneSpacing.sm),
+                child: GestureDetector(
+                  onTap: () {
                     setState(() {
                       _selectedCategory = category;
                     });
                   },
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAdviceResult() {
-    final success = _adviceResult!['success'] == true;
-    final result = _adviceResult!['result'] ?? {};
-    final advice = result['advice'] ?? {};
-    final retrievedKnowledge = result['retrieved_knowledge'] ?? [];
-
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  success ? Icons.check_circle : Icons.error,
-                  color: success ? Colors.green : Colors.red,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '育儿建议',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (advice['generated_advice'] != null) ...[
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.blue[200]!),
-                ),
-                child: Text(
-                  advice['generated_advice'],
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ),
-            ],
-            if (retrievedKnowledge.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text(
-                '参考知识',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
-                ),
-              ),
-              const SizedBox(height: 8),
-              ...retrievedKnowledge.take(3).map((knowledge) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    knowledge['content'] ?? '',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SereneSpacing.md,
+                      vertical: SereneSpacing.sm,
                     ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              }).toList(),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchResults() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.list, color: Colors.purple[700]),
-                const SizedBox(width: 8),
-                Text(
-                  '搜索结果',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ..._searchResults.map((result) {
-              final content = result['content'] ?? '';
-              final metadata = result['metadata'] ?? {};
-              final score = result['score'] ?? 0.0;
-              final source = metadata['source'] ?? '未知来源';
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey[300]!),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.source, size: 14, color: Colors.grey[500]),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            source,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[500],
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.blue[100],
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            '${(score * 100).toStringAsFixed(0)}%',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.blue[700],
-                            ),
-                          ),
-                        ),
-                      ],
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? SereneColors.primaryContainer
+                          : SereneColors.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+                      border: Border.all(
+                        color: isSelected
+                            ? Colors.transparent
+                            : SereneColors.outlineVariant.withValues(alpha: 0.2),
+                        width: 1,
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      content,
-                      style: const TextStyle(fontSize: 14),
-                      maxLines: 5,
-                      overflow: TextOverflow.ellipsis,
+                    child: Text(
+                      _categoryNames[category] ?? category,
+                      style: SereneTypography.labelMedium.copyWith(
+                        color: isSelected
+                            ? SereneColors.onPrimaryContainer
+                            : SereneColors.onSurfaceVariant,
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               );
-            }).toList(),
-          ],
+            },
+          ),
         ),
+      ],
+    );
+  }
+
+  /// 构建搜索结果
+  Widget _buildSearchResults() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Search Results',
+          style: SereneTypography.headlineSmall.copyWith(
+            color: SereneColors.onSurface,
+          ),
+        ),
+        const SizedBox(height: SereneSpacing.md),
+        ..._searchResults.map((result) {
+          final content = result['content'] ?? '';
+          final metadata = result['metadata'] ?? {};
+          final score = result['score'] ?? 0.0;
+          final source = metadata['source'] ?? 'Unknown Source';
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: SereneSpacing.md),
+            child: _buildAdviceCard(
+              title: source,
+              content: content,
+              source: source,
+              score: score,
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+
+  /// 构建默认建议卡片
+  Widget _buildDefaultAdviceCards() {
+    final List<Map<String, String>> defaultAdvice = [
+      {
+        'title': 'Safe Sleep Positions',
+        'content': 'Always place your baby on their back to sleep, for naps and at night, to reduce the risk of SIDS.',
+        'source': 'AAP Guidelines',
+      },
+      {
+        'title': 'Starting Solid Foods',
+        'content': 'Signs your baby is ready for solids include sitting up with minimal support and showing interest in your food.',
+        'source': 'Nutritionist',
+      },
+      {
+        'title': 'Tummy Time Tips',
+        'content': 'Start with brief sessions of tummy time a few times a day when your baby is awake and alert.',
+        'source': 'Physical Therapy',
+      },
+      {
+        'title': 'Managing Fever',
+        'content': 'Learn when a fever is a sign of normal immune response versus when to contact your healthcare provider immediately.',
+        'source': 'Pediatrician',
+      },
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Popular Advice',
+          style: SereneTypography.headlineSmall.copyWith(
+            color: SereneColors.onSurface,
+          ),
+        ),
+        const SizedBox(height: SereneSpacing.md),
+        ...defaultAdvice.map((advice) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: SereneSpacing.md),
+            child: _buildAdviceCard(
+              title: advice['title']!,
+              content: advice['content']!,
+              source: advice['source']!,
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+
+  /// 构建建议卡片
+  Widget _buildAdviceCard({
+    required String title,
+    required String content,
+    required String source,
+    double? score,
+  }) {
+    return GlassCard(
+      padding: const EdgeInsets.all(SereneSpacing.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: SereneTypography.headlineSmall.copyWith(
+                    color: SereneColors.primary,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: SereneColors.secondaryContainer.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(SereneSpacing.radiusDefault),
+                ),
+                child: Text(
+                  source,
+                  style: SereneTypography.labelMedium.copyWith(
+                    color: SereneColors.onSecondaryContainer,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: SereneSpacing.sm),
+          Text(
+            content,
+            style: SereneTypography.bodyMedium.copyWith(
+              color: SereneColors.onSurfaceVariant,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: SereneSpacing.md),
+          Row(
+            children: [
+              Text(
+                'Read more',
+                style: SereneTypography.labelMedium.copyWith(
+                  color: SereneColors.primary,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.arrow_forward,
+                size: 16,
+                color: SereneColors.primary,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

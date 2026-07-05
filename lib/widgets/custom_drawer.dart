@@ -10,6 +10,10 @@ import '../services/api_service.dart';
 import '../services/notification_service.dart';
 import '../providers/language_provider.dart';
 import '../generated/l10n.dart';
+import '../theme/serene_colors.dart';
+import '../theme/serene_spacing.dart';
+import '../theme/serene_typography.dart';
+import 'serene_toggle.dart';
 
 class CustomDrawer extends ConsumerStatefulWidget {
   const CustomDrawer({Key? key}) : super(key: key);
@@ -90,7 +94,10 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
     if (_selectedDeviceId == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('请先选择设备')),
+          SnackBar(
+            content: const Text('请先选择设备'),
+            backgroundColor: SereneColors.primary,
+          ),
         );
       }
       return;
@@ -159,224 +166,418 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
-        children: [
-          UserAccountsDrawerHeader(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF89F7FE), Color(0xFF66A6FF)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      width: 320,
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          color: SereneColors.surfaceContainerLowest,
+          border: Border(
+            right: BorderSide(
+              color: SereneColors.outlineVariant.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(SereneSpacing.radiusXl),
+            bottomRight: Radius.circular(SereneSpacing.radiusXl),
+          ),
+          child: Column(
+            children: [
+              // 用户头像区域
+              _buildHeader(),
+              // 语言选择器
+              _buildLanguageSelector(),
+              // 菜单内容
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    // AI功能
+                    _buildSection('AI Functions', [
+                      _buildNavItem(
+                        icon: Icons.chat_bubble_outline,
+                        iconColor: const Color(0xFF8b5cf6),
+                        title: 'AI Agent Chat',
+                        onTap: () => Navigator.pushNamed(context, '/chat'),
+                      ),
+                      _buildNavItem(
+                        icon: Icons.lightbulb_outline,
+                        iconColor: const Color(0xFF8b5cf6),
+                        title: 'Parenting Advice',
+                        onTap: () => Navigator.pushNamed(context, '/advice'),
+                      ),
+                    ]),
+                    // 账户与设备
+                    _buildSection('Account & Device', [
+                      _buildNavItem(
+                        icon: Icons.person_outline,
+                        title: S.of(context).manage_account,
+                        onTap: () => Navigator.pushNamed(context, '/account'),
+                      ),
+                      _buildNavItem(
+                        icon: Icons.devices,
+                        title: S.of(context).manage_devices,
+                        subtitle: 'Select Device',
+                        onTap: () => Navigator.pushNamed(context, '/devices'),
+                      ),
+                      _buildNavItem(
+                        icon: Icons.done_outline,
+                        title: 'Smart Home Control',
+                        onTap: () => Navigator.pushNamed(context, '/smart-home'),
+                      ),
+                      _buildNavItem(
+                        icon: Icons.dashboard_customize,
+                        title: 'Monitoring Dashboard',
+                        onTap: () => Navigator.pushNamed(context, '/monitoring'),
+                      ),
+                    ]),
+                    // 偏好设置
+                    _buildSection('Preferences', [
+                      _buildSwitchItem(
+                        icon: Icons.notifications_outlined,
+                        iconColor: SereneColors.primary,
+                        title: S.of(context).enable_notifications,
+                        value: _isNotificationsEnabled,
+                        onChanged: _updateNotificationSetting,
+                      ),
+                      _buildSwitchItem(
+                        icon: Icons.visibility_outlined,
+                        iconColor: SereneColors.primary,
+                        title: 'Enable Video Detection',
+                        value: _isDetectionEnabled,
+                        onChanged: _updateDetectionSetting,
+                      ),
+                    ]),
+                    // 支持与帮助
+                    _buildSection('Support & Help', [
+                      _buildNavItem(
+                        icon: Icons.headset_mic_outlined,
+                        title: S.of(context).customer_support,
+                        onTap: () => Navigator.pushNamed(context, '/support'),
+                      ),
+                      _buildNavItem(
+                        icon: Icons.help_outline,
+                        title: S.of(context).faq,
+                        onTap: () => Navigator.pushNamed(context, '/faq'),
+                      ),
+                      _buildInfoItem(
+                        title: S.of(context).app_version,
+                        value: '1.0.0',
+                      ),
+                    ]),
+                  ],
+                ),
               ),
+              // 退出登录
+              _buildLogoutButton(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 构建头部
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        SereneSpacing.marginMobile,
+        MediaQuery.of(context).padding.top + SereneSpacing.lg,
+        SereneSpacing.marginMobile,
+        SereneSpacing.md,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: SereneColors.surfaceContainerHighest,
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            accountName: Text(
-              _username,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            accountEmail: Text(
-              _email.isNotEmpty ? _email : '',
-              style: const TextStyle(fontSize: 16),
-            ),
-            currentAccountPicture: CircleAvatar(
+            child: CircleAvatar(
+              radius: 30,
               backgroundImage: _avatarPath != null && _avatarPath!.isNotEmpty
                   ? FileImage(File(_avatarPath!))
                   : const AssetImage('lib/assets/images/v.png') as ImageProvider,
             ),
           ),
+          const SizedBox(width: SereneSpacing.md),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8),
-                _buildSectionTitle('账户管理'),
-                _buildInfoTile(
-                  title: S.of(context).manage_account,
-                  icon: Icons.person,
-                  onTap: () => Navigator.pushNamed(context, '/account'),
+                Text(
+                  _username,
+                  style: SereneTypography.headlineSmall.copyWith(
+                    color: SereneColors.onSurface,
+                  ),
                 ),
-                const SizedBox(height: 8),
-                _buildSectionTitle('设备管理'),
-                _buildInfoTile(
-                  title: S.of(context).manage_devices,
-                  icon: Icons.devices,
-                  onTap: () => Navigator.pushNamed(context, '/devices'),
-                ),
-                _buildDropdownTile(
-                  title: '选择设备',
-                  icon: Icons.device_hub,
-                  value: _selectedDeviceId,
-                  options: _deviceList.map((d) => d['id'] as String).toList(),
-                  displayNames: _deviceList.map((d) => d['name'] as String).toList(),
-                  onChanged: (value) async {
-                    setState(() => _selectedDeviceId = value);
-                    await _updateSetting('selected_device_id', value ?? '');
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildSectionTitle('偏好设置'),
-                _buildSwitchTile(
-                  title: S.of(context).enable_notifications,
-                  icon: Icons.notifications,
-                  value: _isNotificationsEnabled,
-                  onChanged: _updateNotificationSetting,
-                ),
-                _buildSwitchTile(
-                  title: '启用视频检测',
-                  icon: Icons.visibility,
-                  value: _isDetectionEnabled,
-                  onChanged: _updateDetectionSetting,
-                ),
-                _buildDropdownTile(
-                  title: S.of(context).language,
-                  icon: Icons.language,
-                  value: _selectedLanguage,
-                  options: const ['English', '中文'],
-                  displayNames: const ['English', '中文'],
-                  onChanged: (value) async {
-                    if (value != null) {
-                      setState(() => _selectedLanguage = value);
-                      _updateSetting('language', value);
-                      ref.read(languageProvider.notifier).state = value;
-                    }
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildSectionTitle('AI功能'),
-                _buildInfoTile(
-                  title: 'AI Agent对话',
-                  icon: Icons.chat,
-                  onTap: () => Navigator.pushNamed(context, '/chat'),
-                ),
-                _buildInfoTile(
-                  title: '育儿建议',
-                  icon: Icons.lightbulb,
-                  onTap: () => Navigator.pushNamed(context, '/advice'),
-                ),
-                _buildInfoTile(
-                  title: '智能家居控制',
-                  icon: Icons.home,
-                  onTap: () => Navigator.pushNamed(context, '/smart-home'),
-                ),
-                _buildInfoTile(
-                  title: '监控仪表盘',
-                  icon: Icons.dashboard,
-                  onTap: () => Navigator.pushNamed(context, '/monitoring'),
-                ),
-                const SizedBox(height: 8),
-                _buildSectionTitle('支持与帮助'),
-                _buildInfoTile(
-                  title: S.of(context).customer_support,
-                  icon: Icons.headset_mic,
-                  onTap: () => Navigator.pushNamed(context, '/support'),
-                ),
-                _buildInfoTile(
-                  title: S.of(context).faq,
-                  icon: Icons.help,
-                  onTap: () => Navigator.pushNamed(context, '/faq'),
-                ),
-                const SizedBox(height: 8),
-                _buildSectionTitle('关于'),
-                _buildInfoTile(
-                  title: S.of(context).app_version,
-                  icon: Icons.info,
-                  value: '1.0.0',
+                const SizedBox(height: 4),
+                Text(
+                  _email.isNotEmpty ? _email : '',
+                  style: SereneTypography.bodySmall.copyWith(
+                    color: SereneColors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Logout', style: TextStyle(color: Colors.red)),
-            onTap: () async {
-              Navigator.of(context).pop();
-              await AuthService().logout(context);
-            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.black87),
+  /// 构建语言选择器
+  Widget _buildLanguageSelector() {
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        horizontal: SereneSpacing.marginMobile,
+        vertical: SereneSpacing.sm,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: SereneSpacing.md,
+        vertical: SereneSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(SereneSpacing.radiusDefault),
+        color: SereneColors.surfaceContainerHigh.withValues(alpha: 0.5),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.language,
+            size: 20,
+            color: SereneColors.onSurfaceVariant,
+          ),
+          const SizedBox(width: SereneSpacing.sm),
+          Expanded(
+            child: Text(
+              'Language: $_selectedLanguage',
+              style: SereneTypography.bodyMedium.copyWith(
+                color: SereneColors.onSurface,
+              ),
+            ),
+          ),
+          Icon(
+            Icons.arrow_drop_down,
+            color: SereneColors.onSurfaceVariant,
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildSwitchTile({
-    required String title,
-    required IconData icon,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blue),
-        title: Text(title),
-        trailing: Switch(value: value, onChanged: onChanged),
-      ),
+  /// 构建分区
+  Widget _buildSection(String title, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            SereneSpacing.marginMobile,
+            SereneSpacing.md,
+            SereneSpacing.marginMobile,
+            SereneSpacing.sm,
+          ),
+          child: Text(
+            title,
+            style: SereneTypography.labelMedium.copyWith(
+              color: SereneColors.onSurfaceVariant,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        ...children,
+        Divider(
+          height: 1,
+          indent: SereneSpacing.marginMobile,
+          endIndent: SereneSpacing.marginMobile,
+          color: SereneColors.outlineVariant.withValues(alpha: 0.1),
+        ),
+      ],
     );
   }
 
-  Widget _buildDropdownTile({
-    required String title,
+  /// 构建导航项
+  Widget _buildNavItem({
     required IconData icon,
-    required String? value,
-    required List<String> options,
-    required List<String> displayNames,
-    required ValueChanged<String?> onChanged,
+    Color? iconColor,
+    required String title,
+    String? subtitle,
+    VoidCallback? onTap,
   }) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.green),
-        title: Text(title),
-        trailing: DropdownButton<String>(
-          value: options.contains(value) ? value : null,
-          hint: const Text("请选择"),
-          underline: const SizedBox(),
-          items: List.generate(options.length, (index) {
-            return DropdownMenuItem<String>(
-              value: options[index],
-              child: Text(displayNames[index]),
-            );
-          }),
-          onChanged: onChanged,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: SereneSpacing.marginMobile,
+          vertical: SereneSpacing.md,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 24,
+              color: iconColor ?? SereneColors.onSurfaceVariant,
+            ),
+            const SizedBox(width: SereneSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: SereneTypography.bodyMedium.copyWith(
+                      color: SereneColors.onSurface,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: SereneTypography.labelMedium.copyWith(
+                        color: SereneColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoTile({
-    required String title,
+  /// 构建开关项
+  Widget _buildSwitchItem({
     required IconData icon,
-    String? value,
-    VoidCallback? onTap,
+    Color? iconColor,
+    required String title,
+    required bool value,
+    required ValueChanged<bool> onChanged,
   }) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.purple),
-        title: Text(title),
-        trailing: value != null
-            ? Text(value, style: const TextStyle(color: Colors.grey))
-            : const Icon(Icons.arrow_forward_ios, size: 16.0),
-        onTap: () {
-          if (title == S.of(context).app_version) {
-            _showAppVersionDialog(context);
-          } else {
-            onTap?.call();
-          }
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: SereneSpacing.marginMobile,
+        vertical: SereneSpacing.md,
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 24,
+            color: iconColor ?? SereneColors.primary,
+          ),
+          const SizedBox(width: SereneSpacing.md),
+          Expanded(
+            child: Text(
+              title,
+              style: SereneTypography.bodyMedium.copyWith(
+                color: SereneColors.onSurface,
+              ),
+            ),
+          ),
+          SereneToggle(
+            value: value,
+            onChanged: onChanged,
+            activeColor: SereneColors.secondaryContainer,
+            inactiveColor: SereneColors.outlineVariant,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建信息项
+  Widget _buildInfoItem({
+    required String title,
+    required String value,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: SereneSpacing.marginMobile,
+        vertical: SereneSpacing.md,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: SereneTypography.bodyMedium.copyWith(
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
+          Text(
+            value,
+            style: SereneTypography.labelMedium.copyWith(
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建退出登录按钮
+  Widget _buildLogoutButton() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        SereneSpacing.marginMobile,
+        SereneSpacing.md,
+        SereneSpacing.marginMobile,
+        MediaQuery.of(context).padding.bottom + SereneSpacing.md,
+      ),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: SereneColors.outlineVariant.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+      ),
+      child: InkWell(
+        onTap: () async {
+          Navigator.of(context).pop();
+          await AuthService().logout(context);
         },
+        borderRadius: BorderRadius.circular(SereneSpacing.radiusXl),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: SereneSpacing.md,
+            vertical: SereneSpacing.md,
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.logout,
+                size: 24,
+                color: SereneColors.error,
+              ),
+              const SizedBox(width: SereneSpacing.md),
+              Text(
+                'Log Out',
+                style: SereneTypography.labelLarge.copyWith(
+                  color: SereneColors.error,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -386,12 +587,31 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('提示'),
-          content: const Text('疯狂星期四，V我50！'),
+          backgroundColor: SereneColors.surfaceContainerLowest,
+          shape: RoundedRectangleBorder(
+            borderRadius: SereneSpacing.dialogRadius,
+          ),
+          title: Text(
+            '提示',
+            style: SereneTypography.headlineSmall.copyWith(
+              color: SereneColors.onSurface,
+            ),
+          ),
+          content: Text(
+            '疯狂星期四，V我50！',
+            style: SereneTypography.bodyMedium.copyWith(
+              color: SereneColors.onSurfaceVariant,
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('确定'),
+              child: Text(
+                '确定',
+                style: SereneTypography.labelLarge.copyWith(
+                  color: SereneColors.primary,
+                ),
+              ),
             ),
           ],
         );

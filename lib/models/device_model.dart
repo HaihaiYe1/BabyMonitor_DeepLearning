@@ -46,7 +46,7 @@ class Device {
   /// 从 JSON 解析设备数据
   factory Device.fromJson(Map<String, dynamic> json) {
     return Device(
-      id: json['id'].toString() ?? '',  // 强制转换 id 为 String
+      id: json['id'].toString(),  // 强制转换 id 为 String
       name: json['name'] ?? 'unknown_device',
       ip: json['ip'] ?? 'unknown_ip',
       status: json['status'] ?? 'unknown_status',

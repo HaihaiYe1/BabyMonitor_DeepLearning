@@ -38,6 +38,7 @@
   "register": "Register",
   "error_empty_fields": "Email and password cannot be empty",
   "error_invalid_credentials": "Invalid email or password",
+  "password_length_hint": "Password length: 6-72 characters",
 
   "create_account": "Create Account",
   "username_hint": "Username (default: User123)",
